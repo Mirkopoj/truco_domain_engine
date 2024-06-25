@@ -1,0 +1,48 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8x]{inputenc}
+\usepackage{fullpage}
+
+\usepackage{tikz-uml}
+
+\begin{document}
+
+\begin{center}
+\begin{tikzpicture}
+\begin{umlstate}[name=Main]{Diagrama de estados de una ronda}
+\umlstateinitial[y=4, name=Initial]
+\umlbasicstate[y=1, name=inicio, fill=white]{Sin cantos}
+\begin{umlstate}[name=Envidos, fill=red!20]{Subestados envido}
+\umlbasicstate[y=-3, name=envido, fill=white]{Envido}
+\umlbasicstate[y=-6, name=envidoenvido, fill=white]{Envido envido}
+\umlbasicstate[y=-9, name=realenvido, fill=white]{Real envido}
+\umlbasicstate[y=-12, name=faltaenvido, fill=white]{Falta envido}
+\umltrans[arg={Canta envido}, pos=.5, anchor=east]{envido}{envidoenvido}
+\umltrans[arg={Canta real envido}, pos=.5, anchor=east]{envidoenvido}{realenvido}
+\umltrans[arg={Canta falta envido}, pos=.5, anchor=east]{realenvido}{faltaenvido}
+\umlHVHtrans[arm1=-5, arg={Canta falta envido}, pos=1.5]{envidoenvido}{faltaenvido}
+\umlHVHtrans[arm1=-5]{envido}{faltaenvido}
+\umlHVHtrans[arm1=2.25, anchor=east, arg={Canta real envido}, pos=1.2, anchor1=-20]{envido}{realenvido}
+\end{umlstate}
+\umlbasicstate[x=14, y=0, name=nada, fill=white]{Nada}
+\umlbasicstate[x=7, y=-3, name=envidovaprimero, fill=white]{Envido va primero}
+\umlbasicstate[x=14, y=-3, name=truco, fill=white]{Truco}
+\umlbasicstate[x=10, y=-6, name=trucoquerido, fill=white]{Truco querido}
+\umlbasicstate[x=14, y=-6, name=retruco, fill=white]{Re truco}
+\umlbasicstate[x=10, y=-9, name=retrucoquerido, fill=white]{Re truco querido}
+\umlbasicstate[x=14, y=-9, name=valecuatro, fill=white]{Vale cuatro}
+\umlbasicstate[x=10, y=-12, name=valecuatroquerido, fill=white]{Vale cuatro querido}
+\umlstatefinal[x=6, y=3.5, name=Final]
+\umltrans{Initial}{inicio}
+\umlHVHtrans[arm1=3, arg={Canta envido}, pos=1.4, anchor=east]{inicio}{envido}
+\umltrans{envidovaprimero}{envido}
+\umlHVHtrans[arm1=3.5]{inicio}{realenvido}
+\umlHVHtrans[arm1=-1.35, anchor1=-167]{envidovaprimero}{realenvido}
+\umlHVHtrans[arm1=-5]{inicio}{faltaenvido}
+\umlHVHtrans[arm1=-1, anchor1=-160, arg={Canta falta envido}, pos=2.1, anchor=north]{envidovaprimero}{faltaenvido}
+\end{umlstate}
+\end{tikzpicture}
+\end{center}
+
+\end{document}
