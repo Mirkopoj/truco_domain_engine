@@ -1,28 +1,27 @@
-use crate::{
-    falta_envido::FaltaEnvido, nada::Nada, r#final::Final, real_envido::RealEnvido, Envidos,
-    TrucoState, Trucos,
-};
+use super::{r#final::Final, re_truco::ReTruco, Envidos, TrucoState, Trucos};
 
 #[derive(Debug, Clone, Copy)]
-pub struct EnvidoEnvido;
+pub struct TrucoQuerido{
+    tantos: Envidos,
+}
 
-const VALOR_QUERIDO: u8 = 4;
-const VALOR_NO_QUERIDO: u8 = 3;
+impl TrucoQuerido {
+    pub fn new(tantos: Envidos) -> Self {
+        Self { tantos }
+    }
+}
 
-impl TrucoState for EnvidoEnvido {
+impl TrucoState for TrucoQuerido {
     fn irse_al_maso(&self) -> Result<Box<dyn TrucoState>, ()> {
-        Ok(Box::new(Final::new(
-            Envidos::Value(VALOR_NO_QUERIDO),
-            Trucos::Simple,
-        )))
+        Ok(Box::new(Final::new(self.tantos, Trucos::Truco)))
     }
 
     fn cantar_quiero(&self) -> Result<Box<dyn TrucoState>, ()> {
-        Ok(Box::new(Nada::new(Envidos::Value(VALOR_QUERIDO))))
+        Err(())
     }
 
     fn cantar_no_quiero(&self) -> Result<Box<dyn TrucoState>, ()> {
-        Ok(Box::new(Nada::new(Envidos::Value(VALOR_NO_QUERIDO))))
+        Err(())
     }
 
     fn cantar_envido(&self) -> Result<Box<dyn TrucoState>, ()> {
@@ -30,11 +29,11 @@ impl TrucoState for EnvidoEnvido {
     }
 
     fn cantar_real_envido(&self) -> Result<Box<dyn TrucoState>, ()> {
-        Ok(Box::new(RealEnvido::new(Envidos::Value(VALOR_QUERIDO))))
+        Err(())
     }
 
     fn cantar_falta_envido(&self) -> Result<Box<dyn TrucoState>, ()> {
-        Ok(Box::new(FaltaEnvido::new(Envidos::Value(VALOR_QUERIDO))))
+        Err(())
     }
 
     fn cantar_truco(&self) -> Result<Box<dyn TrucoState>, ()> {
@@ -42,7 +41,7 @@ impl TrucoState for EnvidoEnvido {
     }
 
     fn cantar_re_truco(&self) -> Result<Box<dyn TrucoState>, ()> {
-        Err(())
+        Ok(Box::new(ReTruco::new(self.tantos)))
     }
 
     fn cantar_vale_cuatro(&self) -> Result<Box<dyn TrucoState>, ()> {
@@ -50,14 +49,14 @@ impl TrucoState for EnvidoEnvido {
     }
 
     fn tirar_carta(&mut self) -> Result<Box<dyn TrucoState>, ()> {
-        Err(())
+        Ok(Box::new(*self))
     }
 
     fn tantos(&self) -> Result<Envidos, &str> {
-        Err("El envido aun no se termina de cantar.")
+        Ok(self.tantos)
     }
 
-    fn valor_ronda(&self) -> Result<u8, &str> {
+    fn valor_ronda(&self) -> Result<Trucos, &str> {
         Err("La ronda aun no a terminado.")
     }
 }

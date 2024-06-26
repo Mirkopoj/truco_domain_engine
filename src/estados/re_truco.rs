@@ -1,31 +1,30 @@
-use crate::{Envidos, TrucoState, Trucos};
+use super::{
+    r#final::Final, re_truco_querido::ReTrucoQuerido, vale_cuatro::ValeCuatro, Envidos, TrucoState,
+    Trucos,
+};
 
 #[derive(Debug, Clone, Copy)]
-pub struct Final {
+pub struct ReTruco {
     tantos: Envidos,
-    valor_ronda: Trucos,
 }
 
-impl Final {
-    pub fn new(tantos: Envidos, valor_ronda: Trucos) -> Self {
-        Self {
-            tantos,
-            valor_ronda,
-        }
+impl ReTruco {
+    pub fn new(tantos: Envidos) -> Self {
+        Self { tantos }
     }
 }
 
-impl TrucoState for Final {
+impl TrucoState for ReTruco {
     fn irse_al_maso(&self) -> Result<Box<dyn TrucoState>, ()> {
-        Err(())
+        Ok(Box::new(Final::new(self.tantos, Trucos::Truco)))
     }
 
     fn cantar_quiero(&self) -> Result<Box<dyn TrucoState>, ()> {
-        Err(())
+        Ok(Box::new(ReTrucoQuerido::new(self.tantos)))
     }
 
     fn cantar_no_quiero(&self) -> Result<Box<dyn TrucoState>, ()> {
-        Err(())
+        Ok(Box::new(Final::new(self.tantos, Trucos::Truco)))
     }
 
     fn cantar_envido(&self) -> Result<Box<dyn TrucoState>, ()> {
@@ -49,18 +48,18 @@ impl TrucoState for Final {
     }
 
     fn cantar_vale_cuatro(&self) -> Result<Box<dyn TrucoState>, ()> {
-        Err(())
+        Ok(Box::new(ValeCuatro::new(self.tantos)))
     }
 
     fn tirar_carta(&mut self) -> Result<Box<dyn TrucoState>, ()> {
-        Err(())
+        Ok(Box::new(ReTrucoQuerido::new(self.tantos)))
     }
 
     fn tantos(&self) -> Result<Envidos, &str> {
         Ok(self.tantos)
     }
 
-    fn valor_ronda(&self) -> Result<u8, &str> {
-        Ok(self.valor_ronda as u8)
+    fn valor_ronda(&self) -> Result<Trucos, &str> {
+        Err("La ronda aun no a terminado.")
     }
 }
