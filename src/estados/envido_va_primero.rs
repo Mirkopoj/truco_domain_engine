@@ -11,39 +11,39 @@ impl TrucoState for EnvidoVaPrimero {
         Ok(Box::new(Final::new(Envidos::Value(0), Trucos::Simple)))
     }
 
-    fn cantar_quiero(&self) -> Result<Box<dyn TrucoState>, ()> {
+    fn cantar_quiero(&self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
         Ok(Box::new(TrucoQuerido::new(Envidos::Value(0))))
     }
 
-    fn cantar_no_quiero(&self) -> Result<Box<dyn TrucoState>, ()> {
+    fn cantar_no_quiero(&self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
         Ok(Box::new(Final::new(Envidos::Value(0), Trucos::Simple)))
     }
 
-    fn cantar_envido(&self) -> Result<Box<dyn TrucoState>, ()> {
+    fn cantar_envido(&self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
         Ok(Box::new(Envido))
     }
 
-    fn cantar_real_envido(&self) -> Result<Box<dyn TrucoState>, ()> {
+    fn cantar_real_envido(&self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
         Ok(Box::new(RealEnvido::new(Envidos::Value(0))))
     }
 
-    fn cantar_falta_envido(&self) -> Result<Box<dyn TrucoState>, ()> {
+    fn cantar_falta_envido(&self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
         Ok(Box::new(FaltaEnvido::new(Envidos::Value(0))))
     }
 
-    fn cantar_truco(&self) -> Result<Box<dyn TrucoState>, ()> {
+    fn cantar_truco(&self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
         Err(())
     }
 
-    fn cantar_re_truco(&self) -> Result<Box<dyn TrucoState>, ()> {
+    fn cantar_re_truco(&self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
         Ok(Box::new(ReTruco::new(Envidos::Value(0))))
     }
 
-    fn cantar_vale_cuatro(&self) -> Result<Box<dyn TrucoState>, ()> {
+    fn cantar_vale_cuatro(&self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
         Err(())
     }
 
-    fn tirar_carta(&mut self) -> Result<Box<dyn TrucoState>, ()> {
+    fn tirar_carta(&mut self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
         Ok(Box::new(TrucoQuerido::new(Envidos::Value(0))))
     }
 

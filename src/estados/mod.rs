@@ -1,16 +1,16 @@
 use std::ops;
 
 pub(super) trait TrucoState {
-    fn irse_al_maso(&self) -> Result<Box<dyn TrucoState>, ()>;
-    fn cantar_quiero(&self) -> Result<Box<dyn TrucoState>, ()>;
-    fn cantar_no_quiero(&self) -> Result<Box<dyn TrucoState>, ()>;
-    fn cantar_envido(&self) -> Result<Box<dyn TrucoState>, ()>;
-    fn cantar_real_envido(&self) -> Result<Box<dyn TrucoState>, ()>;
-    fn cantar_falta_envido(&self) -> Result<Box<dyn TrucoState>, ()>;
-    fn cantar_truco(&self) -> Result<Box<dyn TrucoState>, ()>;
-    fn cantar_re_truco(&self) -> Result<Box<dyn TrucoState>, ()>;
-    fn cantar_vale_cuatro(&self) -> Result<Box<dyn TrucoState>, ()>;
-    fn tirar_carta(&mut self) -> Result<Box<dyn TrucoState>, ()>;
+    fn irse_al_maso(self) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
+    fn cantar_quiero(self, player: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
+    fn cantar_no_quiero(self, player: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
+    fn cantar_envido(self, player: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
+    fn cantar_real_envido(self, player: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
+    fn cantar_falta_envido(self, player: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
+    fn cantar_truco(self, player: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
+    fn cantar_re_truco(self, player: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
+    fn cantar_vale_cuatro(self, player: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
+    fn tirar_carta(self, player: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
     fn tantos(&self) -> Result<Envidos, &str>;
     fn valor_ronda(&self) -> Result<Trucos, &str>;
 }
@@ -37,6 +37,38 @@ pub(super) enum Trucos {
     Truco = 2,
     ReTruco = 3,
     ValeCuatro = 4,
+}
+
+#[derive(Debug, Clone)]
+struct Players {
+    cont: usize,
+    players: Vec<String>,
+}
+
+impl Players {
+    fn new(players: Vec<String>) -> Self {
+        Self { cont: 0, players }
+    }
+
+    fn is_turn(&self, player: &str) -> bool {
+        player == self.players[self.cont]
+    }
+
+    /// Returns true if that was the last player in
+    /// the round and the counter went back to 0
+    fn next_player(&mut self) -> bool {
+        self.cont += 1;
+        self.cont %= self.players.len();
+        self.cont == 0
+    }
+
+    fn is_team(&self, player: &str) -> bool {
+        if let Some(index) = self.players.iter().position(|p| p == player) {
+            index % 2 == self.cont % 2
+        } else {
+            false
+        }
+    }
 }
 
 mod envido;
