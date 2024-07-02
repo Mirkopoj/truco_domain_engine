@@ -16,44 +16,44 @@ impl Final {
 }
 
 impl TrucoState for Final {
-    fn irse_al_maso(&self) -> Result<Box<dyn TrucoState>, ()> {
-        Err(())
+    fn irse_al_maso(self: Box<Self>) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        Err(self)
     }
 
-    fn cantar_quiero(&self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
-        Err(())
+    fn cantar_quiero(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        Err(self)
     }
 
-    fn cantar_no_quiero(&self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
-        Err(())
+    fn cantar_no_quiero(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        Err(self)
     }
 
-    fn cantar_envido(&self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
-        Err(())
+    fn cantar_envido(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        Err(self)
     }
 
-    fn cantar_real_envido(&self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
-        Err(())
+    fn cantar_real_envido(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        Err(self)
     }
 
-    fn cantar_falta_envido(&self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
-        Err(())
+    fn cantar_falta_envido(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        Err(self)
     }
 
-    fn cantar_truco(&self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
-        Err(())
+    fn cantar_truco(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        Err(self)
     }
 
-    fn cantar_re_truco(&self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
-        Err(())
+    fn cantar_re_truco(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        Err(self)
     }
 
-    fn cantar_vale_cuatro(&self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
-        Err(())
+    fn cantar_vale_cuatro(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        Err(self)
     }
 
-    fn tirar_carta(&mut self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
-        Err(())
+    fn tirar_carta(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        Err(self)
     }
 
     fn tantos(&self) -> Result<Envidos, &str> {

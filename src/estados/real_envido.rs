@@ -1,58 +1,82 @@
-use super::{falta_envido::FaltaEnvido, nada::Nada, r#final::Final, Envidos, TrucoState, Trucos};
+use super::{
+    falta_envido::FaltaEnvido, nada::Nada, r#final::Final, Envidos, Players, TrucoState, Trucos,
+};
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct RealEnvido {
     tantos: Envidos,
+    players: Players,
 }
 
 const VALOR_QUERIDO: u8 = 3;
 const VALOR_NO_QUERIDO: u8 = 1;
 
 impl RealEnvido {
-    pub fn new(tantos: Envidos) -> Self {
-        Self { tantos }
+    pub fn new(tantos: Envidos, players: Players) -> Self {
+        Self { tantos, players }
     }
 }
 
 impl TrucoState for RealEnvido {
-    fn irse_al_maso(&self) -> Result<Box<dyn TrucoState>, ()> {
+    fn irse_al_maso(self: Box<Self>) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
         Ok(Box::new(Final::new(self.tantos, Trucos::Simple)))
     }
 
-    fn cantar_quiero(&self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
-        Ok(Box::new(Nada::new(self.tantos + VALOR_QUERIDO)))
+    fn cantar_quiero(self: Box<Self>, player: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        if self.players.is_turn(player) {
+            Ok(Box::new(Nada::new(
+                self.tantos + VALOR_QUERIDO,
+                self.players,
+            )))
+        } else {
+            Err(self)
+        }
     }
 
-    fn cantar_no_quiero(&self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
-        Ok(Box::new(Nada::new(self.tantos + VALOR_NO_QUERIDO)))
+    fn cantar_no_quiero(self: Box<Self>, player: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        if self.players.is_turn(player) {
+            Ok(Box::new(Nada::new(
+                self.tantos + VALOR_NO_QUERIDO,
+                self.players,
+            )))
+        } else {
+            Err(self)
+        }
     }
 
-    fn cantar_envido(&self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
-        Err(())
+    fn cantar_envido(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        Err(self)
     }
 
-    fn cantar_real_envido(&self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
-        Err(())
+    fn cantar_real_envido(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        Err(self)
     }
 
-    fn cantar_falta_envido(&self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
-        Ok(Box::new(FaltaEnvido::new(self.tantos + VALOR_QUERIDO)))
+    fn cantar_falta_envido(self: Box<Self>, player: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        if self.players.is_turn(player) {
+            Ok(Box::new(FaltaEnvido::new(
+                self.tantos + VALOR_QUERIDO,
+                self.players,
+            )))
+        } else {
+            Err(self)
+        }
     }
 
-    fn cantar_truco(&self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
-        Err(())
+    fn cantar_truco(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        Err(self)
     }
 
-    fn cantar_re_truco(&self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
-        Err(())
+    fn cantar_re_truco(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        Err(self)
     }
 
-    fn cantar_vale_cuatro(&self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
-        Err(())
+    fn cantar_vale_cuatro(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        Err(self)
     }
 
-    fn tirar_carta(&mut self, player: &str) -> Result<Box<dyn TrucoState>, ()> {
-        Err(())
+    fn tirar_carta(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        Err(self)
     }
 
     fn tantos(&self) -> Result<Envidos, &str> {

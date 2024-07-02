@@ -1,16 +1,43 @@
 use std::ops;
 
 pub(super) trait TrucoState {
-    fn irse_al_maso(self) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
-    fn cantar_quiero(self, player: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
-    fn cantar_no_quiero(self, player: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
-    fn cantar_envido(self, player: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
-    fn cantar_real_envido(self, player: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
-    fn cantar_falta_envido(self, player: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
-    fn cantar_truco(self, player: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
-    fn cantar_re_truco(self, player: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
-    fn cantar_vale_cuatro(self, player: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
-    fn tirar_carta(self, player: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
+    fn irse_al_maso(self: Box<Self>) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
+    fn cantar_quiero(
+        self: Box<Self>,
+        player: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
+    fn cantar_no_quiero(
+        self: Box<Self>,
+        player: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
+    fn cantar_envido(
+        self: Box<Self>,
+        player: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
+    fn cantar_real_envido(
+        self: Box<Self>,
+        player: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
+    fn cantar_falta_envido(
+        self: Box<Self>,
+        player: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
+    fn cantar_truco(
+        self: Box<Self>,
+        player: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
+    fn cantar_re_truco(
+        self: Box<Self>,
+        player: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
+    fn cantar_vale_cuatro(
+        self: Box<Self>,
+        player: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
+    fn tirar_carta(
+        self: Box<Self>,
+        player: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
     fn tantos(&self) -> Result<Envidos, &str>;
     fn valor_ronda(&self) -> Result<Trucos, &str>;
 }
