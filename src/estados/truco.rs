@@ -1,16 +1,16 @@
 use super::{
-    r#final::Final, re_truco::ReTruco, truco_querido::TrucoQuerido, Envidos, Players, TrucoState,
+    r#final::Final, re_truco::ReTruco, truco_querido::TrucoQuerido, Envidos, PlayersState, TrucoState,
     Trucos,
 };
 
 #[derive(Debug, Clone)]
 pub struct Truco {
     tantos: Envidos,
-    players: Players,
+    players: PlayersState,
 }
 
 impl Truco {
-    pub fn new(tantos: Envidos, players: Players) -> Self {
+    pub fn new(tantos: Envidos, players: PlayersState) -> Self {
         Self { tantos, players }
     }
 }
@@ -24,7 +24,7 @@ impl TrucoState for Truco {
         self: Box<Self>,
         player: &str,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_turn(player) {
+        if self.players.is_accepting(player) {
             Ok(Box::new(TrucoQuerido::new(self.tantos, self.players)))
         } else {
             Err(self)
@@ -35,7 +35,7 @@ impl TrucoState for Truco {
         self: Box<Self>,
         player: &str,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_turn(player) {
+        if self.players.is_accepting(player) {
             Ok(Box::new(Final::new(self.tantos, Trucos::Simple)))
         } else {
             Err(self)
@@ -65,10 +65,11 @@ impl TrucoState for Truco {
     }
 
     fn cantar_re_truco(
-        self: Box<Self>,
+        mut self: Box<Self>,
         player: &str,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_turn(player) {
+        if self.players.is_accepting(player) {
+            self.players.chalenges(player);
             Ok(Box::new(ReTruco::new(self.tantos, self.players)))
         } else {
             Err(self)
@@ -82,16 +83,8 @@ impl TrucoState for Truco {
         Err(self)
     }
 
-    fn tirar_carta(
-        mut self: Box<Self>,
-        player: &str,
-    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_turn(player) {
-            self.players.next_player();
-            Ok(Box::new(TrucoQuerido::new(self.tantos, self.players)))
-        } else {
-            Err(self)
-        }
+    fn tirar_carta(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        Err(self)
     }
 
     fn tantos(&self) -> Result<Envidos, &str> {

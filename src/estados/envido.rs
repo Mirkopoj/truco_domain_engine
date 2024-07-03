@@ -1,15 +1,15 @@
 use super::{
     envido_envido::EnvidoEnvido, falta_envido::FaltaEnvido, nada::Nada, r#final::Final,
-    real_envido::RealEnvido, Envidos, Players, TrucoState, Trucos,
+    real_envido::RealEnvido, Envidos, PlayersState, TrucoState, Trucos,
 };
 
 #[derive(Debug, Clone)]
 pub struct Envido {
-    players: Players,
+    players: PlayersState,
 }
 
 impl Envido {
-    pub fn new(players: Players) -> Self {
+    pub fn new(players: PlayersState) -> Self {
         Self { players }
     }
 }
@@ -29,7 +29,7 @@ impl TrucoState for Envido {
         self: Box<Self>,
         player: &str,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_turn(player) {
+        if self.players.is_accepting(player) {
             Ok(Box::new(Nada::new(
                 Envidos::Value(VALOR_QUERIDO),
                 self.players,
@@ -43,7 +43,7 @@ impl TrucoState for Envido {
         self: Box<Self>,
         player: &str,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_turn(player) {
+        if self.players.is_accepting(player) {
             Ok(Box::new(Nada::new(
                 Envidos::Value(VALOR_NO_QUERIDO),
                 self.players,
@@ -54,10 +54,11 @@ impl TrucoState for Envido {
     }
 
     fn cantar_envido(
-        self: Box<Self>,
+        mut self: Box<Self>,
         player: &str,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_turn(player) {
+        if self.players.is_accepting(player) {
+            self.players.chalenges(player);
             Ok(Box::new(EnvidoEnvido::new(self.players)))
         } else {
             Err(self)
@@ -65,10 +66,11 @@ impl TrucoState for Envido {
     }
 
     fn cantar_real_envido(
-        self: Box<Self>,
+        mut self: Box<Self>,
         player: &str,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_turn(player) {
+        if self.players.is_accepting(player) {
+            self.players.chalenges(player);
             Ok(Box::new(RealEnvido::new(
                 Envidos::Value(VALOR_QUERIDO),
                 self.players,
@@ -79,10 +81,11 @@ impl TrucoState for Envido {
     }
 
     fn cantar_falta_envido(
-        self: Box<Self>,
+        mut self: Box<Self>,
         player: &str,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_turn(player) {
+        if self.players.is_accepting(player) {
+            self.players.chalenges(player);
             Ok(Box::new(FaltaEnvido::new(
                 Envidos::Value(VALOR_QUERIDO),
                 self.players,

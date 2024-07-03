@@ -67,14 +67,19 @@ pub(super) enum Trucos {
 }
 
 #[derive(Debug, Clone)]
-struct Players {
+struct PlayersState {
     cont: usize,
     players: Vec<String>,
+    evens_accepting: bool,
 }
 
-impl Players {
+impl PlayersState {
     fn new(players: Vec<String>) -> Self {
-        Self { cont: 0, players }
+        Self {
+            cont: 0,
+            players,
+            evens_accepting: false,
+        }
     }
 
     fn is_turn(&self, player: &str) -> bool {
@@ -89,11 +94,17 @@ impl Players {
         self.cont == 0
     }
 
-    fn is_team(&self, player: &str) -> bool {
+    fn is_accepting(&self, player: &str) -> bool {
         if let Some(index) = self.players.iter().position(|p| p == player) {
-            index % 2 == self.cont % 2
+            (index % 2 == 0) == self.evens_accepting
         } else {
             false
+        }
+    }
+
+    fn chalenges(&mut self, player: &str) {
+        if let Some(index) = self.players.iter().position(|p| p == player) {
+            self.evens_accepting = index % 2 != 0;
         }
     }
 }

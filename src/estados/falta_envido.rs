@@ -1,13 +1,13 @@
-use super::{nada::Nada, r#final::Final, Envidos, Players, TrucoState, Trucos};
+use super::{nada::Nada, r#final::Final, Envidos, PlayersState, TrucoState, Trucos};
 
 #[derive(Debug, Clone)]
 pub struct FaltaEnvido {
     tantos: Envidos,
-    players: Players,
+    players: PlayersState,
 }
 
 impl FaltaEnvido {
-    pub fn new(tantos: Envidos, players: Players) -> Self {
+    pub fn new(tantos: Envidos, players: PlayersState) -> Self {
         Self { tantos, players }
     }
 }
@@ -21,7 +21,7 @@ impl TrucoState for FaltaEnvido {
         self: Box<Self>,
         player: &str,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_turn(player) {
+        if self.players.is_accepting(player) {
             Ok(Box::new(Nada::new(Envidos::Falta, self.players)))
         } else {
             Err(self)
@@ -32,7 +32,7 @@ impl TrucoState for FaltaEnvido {
         self: Box<Self>,
         player: &str,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_turn(player) {
+        if self.players.is_accepting(player) {
             Ok(Box::new(Nada::new(self.tantos + 1, self.players)))
         } else {
             Err(self)

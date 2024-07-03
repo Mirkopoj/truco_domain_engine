@@ -1,15 +1,15 @@
 use super::{
     envido::Envido, falta_envido::FaltaEnvido, r#final::Final, re_truco::ReTruco,
-    real_envido::RealEnvido, truco_querido::TrucoQuerido, Envidos, Players, TrucoState, Trucos,
+    real_envido::RealEnvido, truco_querido::TrucoQuerido, Envidos, PlayersState, TrucoState, Trucos,
 };
 
 #[derive(Debug, Clone)]
 pub struct EnvidoVaPrimero {
-    players: Players,
+    players: PlayersState,
 }
 
 impl EnvidoVaPrimero {
-    pub fn new(players: Players) -> Self {
+    pub fn new(players: PlayersState) -> Self {
         Self { players }
     }
 }
@@ -23,10 +23,10 @@ impl TrucoState for EnvidoVaPrimero {
         self: Box<Self>,
         player: &str,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_team(player) {
-            Err(self)
-        } else {
+        if self.players.is_accepting(player) {
             Ok(Box::new(TrucoQuerido::new(Envidos::Value(0), self.players)))
+        } else {
+            Err(self)
         }
     }
 
@@ -34,43 +34,46 @@ impl TrucoState for EnvidoVaPrimero {
         self: Box<Self>,
         player: &str,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_team(player) {
-            Err(self)
-        } else {
+        if self.players.is_accepting(player) {
             Ok(Box::new(Final::new(Envidos::Value(0), Trucos::Simple)))
+        } else {
+            Err(self)
         }
     }
 
     fn cantar_envido(
-        self: Box<Self>,
+        mut self: Box<Self>,
         player: &str,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_team(player) {
-            Err(self)
-        } else {
+        if self.players.is_accepting(player) {
+            self.players.chalenges(player);
             Ok(Box::new(Envido::new(self.players)))
+        } else {
+            Err(self)
         }
     }
 
     fn cantar_real_envido(
-        self: Box<Self>,
+        mut self: Box<Self>,
         player: &str,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_team(player) {
-            Err(self)
-        } else {
+        if self.players.is_accepting(player) {
+            self.players.chalenges(player);
             Ok(Box::new(RealEnvido::new(Envidos::Value(0), self.players)))
+        } else {
+            Err(self)
         }
     }
 
     fn cantar_falta_envido(
-        self: Box<Self>,
+        mut self: Box<Self>,
         player: &str,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_team(player) {
-            Err(self)
-        } else {
+        if self.players.is_accepting(player) {
+            self.players.chalenges(player);
             Ok(Box::new(FaltaEnvido::new(Envidos::Value(0), self.players)))
+        } else {
+            Err(self)
         }
     }
 
@@ -79,13 +82,14 @@ impl TrucoState for EnvidoVaPrimero {
     }
 
     fn cantar_re_truco(
-        self: Box<Self>,
+        mut self: Box<Self>,
         player: &str,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_team(player) {
-            Err(self)
-        } else {
+        if self.players.is_accepting(player) {
+            self.players.chalenges(player);
             Ok(Box::new(ReTruco::new(Envidos::Value(0), self.players)))
+        } else {
+            Err(self)
         }
     }
 
@@ -96,10 +100,7 @@ impl TrucoState for EnvidoVaPrimero {
         Err(self)
     }
 
-    fn tirar_carta(
-        self: Box<Self>,
-        _: &str,
-    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+    fn tirar_carta(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
         Err(self)
     }
 

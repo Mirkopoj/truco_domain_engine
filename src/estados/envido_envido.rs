@@ -1,15 +1,15 @@
 use super::{
     falta_envido::FaltaEnvido, nada::Nada, r#final::Final, real_envido::RealEnvido, Envidos,
-    Players, TrucoState, Trucos,
+    PlayersState, TrucoState, Trucos,
 };
 
 #[derive(Debug, Clone)]
 pub struct EnvidoEnvido {
-    players: Players,
+    players: PlayersState,
 }
 
 impl EnvidoEnvido {
-    pub fn new(players: Players) -> Self {
+    pub fn new(players: PlayersState) -> Self {
         Self { players }
     }
 }
@@ -25,8 +25,11 @@ impl TrucoState for EnvidoEnvido {
         )))
     }
 
-    fn cantar_quiero(self: Box<Self>, player: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_turn(player) {
+    fn cantar_quiero(
+        self: Box<Self>,
+        player: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        if self.players.is_accepting(player) {
             Ok(Box::new(Nada::new(
                 Envidos::Value(VALOR_QUERIDO),
                 self.players,
@@ -36,8 +39,11 @@ impl TrucoState for EnvidoEnvido {
         }
     }
 
-    fn cantar_no_quiero(self: Box<Self>, player: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_turn(player) {
+    fn cantar_no_quiero(
+        self: Box<Self>,
+        player: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        if self.players.is_accepting(player) {
             Ok(Box::new(Nada::new(
                 Envidos::Value(VALOR_NO_QUERIDO),
                 self.players,
@@ -51,8 +57,12 @@ impl TrucoState for EnvidoEnvido {
         Err(self)
     }
 
-    fn cantar_real_envido(self: Box<Self>, player: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_turn(player) {
+    fn cantar_real_envido(
+        mut self: Box<Self>,
+        player: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        if self.players.is_accepting(player) {
+            self.players.chalenges(player);
             Ok(Box::new(RealEnvido::new(
                 Envidos::Value(VALOR_QUERIDO),
                 self.players,
@@ -62,8 +72,12 @@ impl TrucoState for EnvidoEnvido {
         }
     }
 
-    fn cantar_falta_envido(self: Box<Self>, player: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_turn(player) {
+    fn cantar_falta_envido(
+        mut self: Box<Self>,
+        player: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        if self.players.is_accepting(player) {
+            self.players.chalenges(player);
             Ok(Box::new(FaltaEnvido::new(
                 Envidos::Value(VALOR_QUERIDO),
                 self.players,
@@ -77,11 +91,17 @@ impl TrucoState for EnvidoEnvido {
         Err(self)
     }
 
-    fn cantar_re_truco(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+    fn cantar_re_truco(
+        self: Box<Self>,
+        _: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
         Err(self)
     }
 
-    fn cantar_vale_cuatro(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+    fn cantar_vale_cuatro(
+        self: Box<Self>,
+        _: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
         Err(self)
     }
 

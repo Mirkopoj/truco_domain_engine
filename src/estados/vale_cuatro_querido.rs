@@ -1,13 +1,13 @@
-use super::{r#final::Final, Envidos, Players, TrucoState, Trucos};
+use super::{r#final::Final, Envidos, PlayersState, TrucoState, Trucos};
 
 #[derive(Debug, Clone)]
 pub struct ValeCuatroQuerido {
     tantos: Envidos,
-    players: Players,
+    players: PlayersState,
 }
 
 impl ValeCuatroQuerido {
-    pub fn new(tantos: Envidos, players: Players) -> Self {
+    pub fn new(tantos: Envidos, players: PlayersState) -> Self {
         Self { tantos, players }
     }
 }

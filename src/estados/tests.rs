@@ -50,13 +50,14 @@ fn re_truco() {
 #[test]
 fn re_truco_con_quiero() {
     let mut game_builder = TrucoStateMachineBuilder::new();
-    game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
+    game_builder.add_player("A".to_string());
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_truco("B").is_ok());
     assert!(game.cantar_quiero("A").is_ok());
-    assert!(game.cantar_re_truco("B").is_ok());
-    assert!(game.cantar_quiero("A").is_ok());
+    assert!(game.tirar_carta("B").is_ok());
+    assert!(game.cantar_re_truco("A").is_ok());
+    assert!(game.cantar_quiero("B").is_ok());
     assert_eq!(Ok(()), game.irse_al_maso());
     assert_eq!(game.tantos(), Ok(Envidos::Value(0)));
     assert_eq!(game.valor_ronda(), Ok(3));
@@ -65,8 +66,8 @@ fn re_truco_con_quiero() {
 #[test]
 fn vale_cuatro() {
     let mut game_builder = TrucoStateMachineBuilder::new();
-    game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
+    game_builder.add_player("A".to_string());
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_truco("B").is_ok());
     assert!(game.cantar_re_truco("A").is_ok());
@@ -85,8 +86,10 @@ fn vale_cuatro_con_quiero() {
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_truco("B").is_ok());
     assert!(game.cantar_quiero("A").is_ok());
-    assert!(game.cantar_re_truco("B").is_ok());
-    assert!(game.cantar_quiero("A").is_ok());
+    assert!(game.tirar_carta("B").is_ok());
+    assert!(game.cantar_re_truco("A").is_ok());
+    assert!(game.cantar_quiero("B").is_ok());
+    assert!(game.tirar_carta("A").is_ok());
     assert!(game.cantar_vale_cuatro("B").is_ok());
     assert!(game.cantar_quiero("A").is_ok());
     assert_eq!(Ok(()), game.irse_al_maso());
@@ -97,8 +100,8 @@ fn vale_cuatro_con_quiero() {
 #[test]
 fn envido() {
     let mut game_builder = TrucoStateMachineBuilder::new();
-    game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
+    game_builder.add_player("A".to_string());
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_envido("B").is_ok());
     assert!(game.cantar_quiero("A").is_ok());
@@ -109,8 +112,8 @@ fn envido() {
 #[test]
 fn real_envido() {
     let mut game_builder = TrucoStateMachineBuilder::new();
-    game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
+    game_builder.add_player("A".to_string());
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_real_envido("B").is_ok());
     assert!(game.cantar_quiero("A").is_ok());
@@ -121,8 +124,8 @@ fn real_envido() {
 #[test]
 fn falta_envido() {
     let mut game_builder = TrucoStateMachineBuilder::new();
-    game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
+    game_builder.add_player("A".to_string());
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_falta_envido("B").is_ok());
     assert!(game.cantar_quiero("A").is_ok());
@@ -133,8 +136,8 @@ fn falta_envido() {
 #[test]
 fn envido_envido() {
     let mut game_builder = TrucoStateMachineBuilder::new();
-    game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
+    game_builder.add_player("A".to_string());
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_envido("B").is_ok());
     assert!(game.cantar_envido("A").is_ok());
@@ -159,8 +162,8 @@ fn envido_real_envido() {
 #[test]
 fn envido_envido_real_envido() {
     let mut game_builder = TrucoStateMachineBuilder::new();
-    game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
+    game_builder.add_player("A".to_string());
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_envido("B").is_ok());
     assert!(game.cantar_envido("A").is_ok());
@@ -173,8 +176,8 @@ fn envido_envido_real_envido() {
 #[test]
 fn envido_falta_envido() {
     let mut game_builder = TrucoStateMachineBuilder::new();
-    game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
+    game_builder.add_player("A".to_string());
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_envido("B").is_ok());
     assert!(game.cantar_falta_envido("A").is_ok());
@@ -199,8 +202,8 @@ fn real_envido_falta_envido() {
 #[test]
 fn envido_envido_falta_envido() {
     let mut game_builder = TrucoStateMachineBuilder::new();
-    game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
+    game_builder.add_player("A".to_string());
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_envido("B").is_ok());
     assert!(game.cantar_envido("A").is_ok());
@@ -216,10 +219,10 @@ fn envido_real_envido_falta_envido() {
     game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
     let mut game = game_builder.build().unwrap();
-    assert!(game.cantar_envido("B").is_ok());
-    assert!(game.cantar_real_envido("A").is_ok());
-    assert!(game.cantar_falta_envido("B").is_ok());
-    assert!(game.cantar_quiero("A").is_ok());
+    assert!(game.cantar_envido("A").is_ok());
+    assert!(game.cantar_real_envido("B").is_ok());
+    assert!(game.cantar_falta_envido("A").is_ok());
+    assert!(game.cantar_quiero("B").is_ok());
     assert_eq!(game.tantos(), Ok(Envidos::Falta));
     assert!(game.valor_ronda().is_err());
 }
@@ -227,8 +230,8 @@ fn envido_real_envido_falta_envido() {
 #[test]
 fn envido_envido_real_envido_falta_envido() {
     let mut game_builder = TrucoStateMachineBuilder::new();
-    game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
+    game_builder.add_player("A".to_string());
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_envido("B").is_ok());
     assert!(game.cantar_envido("A").is_ok());
@@ -270,8 +273,9 @@ fn re_truco_con_quiero_no_quiero() {
     game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
     let mut game = game_builder.build().unwrap();
-    assert!(game.cantar_truco("B").is_ok());
-    assert!(game.cantar_quiero("A").is_ok());
+    assert!(game.cantar_truco("A").is_ok());
+    assert!(game.cantar_quiero("B").is_ok());
+    assert!(game.tirar_carta("A").is_ok());
     assert!(game.cantar_re_truco("B").is_ok());
     assert!(game.cantar_no_quiero("A").is_ok());
     assert_eq!(game.tantos(), Ok(Envidos::Value(0)));
@@ -281,8 +285,8 @@ fn re_truco_con_quiero_no_quiero() {
 #[test]
 fn vale_cuatro_no_quiero() {
     let mut game_builder = TrucoStateMachineBuilder::new();
-    game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
+    game_builder.add_player("A".to_string());
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_truco("B").is_ok());
     assert!(game.cantar_re_truco("A").is_ok());
@@ -295,13 +299,17 @@ fn vale_cuatro_no_quiero() {
 #[test]
 fn vale_cuatro_con_quiero_no_quiero() {
     let mut game_builder = TrucoStateMachineBuilder::new();
-    game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
+    game_builder.add_player("A".to_string());
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_truco("B").is_ok());
     assert!(game.cantar_quiero("A").is_ok());
-    assert!(game.cantar_re_truco("B").is_ok());
-    assert!(game.cantar_quiero("A").is_ok());
+    assert!(game.cantar_re_truco("B").is_err());
+    assert!(game.cantar_re_truco("A").is_err());
+    assert!(game.tirar_carta("B").is_ok());
+    assert!(game.cantar_re_truco("A").is_ok());
+    assert!(game.cantar_quiero("B").is_ok());
+    assert!(game.tirar_carta("A").is_ok());
     assert!(game.cantar_vale_cuatro("B").is_ok());
     assert!(game.cantar_no_quiero("A").is_ok());
     assert_eq!(game.tantos(), Ok(Envidos::Value(0)));
@@ -311,8 +319,8 @@ fn vale_cuatro_con_quiero_no_quiero() {
 #[test]
 fn envido_no_quiero() {
     let mut game_builder = TrucoStateMachineBuilder::new();
-    game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
+    game_builder.add_player("A".to_string());
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_envido("B").is_ok());
     assert!(game.cantar_no_quiero("A").is_ok());
@@ -323,8 +331,8 @@ fn envido_no_quiero() {
 #[test]
 fn real_envido_no_quiero() {
     let mut game_builder = TrucoStateMachineBuilder::new();
-    game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
+    game_builder.add_player("A".to_string());
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_real_envido("B").is_ok());
     assert!(game.cantar_no_quiero("A").is_ok());
@@ -335,8 +343,8 @@ fn real_envido_no_quiero() {
 #[test]
 fn falta_envido_no_quiero() {
     let mut game_builder = TrucoStateMachineBuilder::new();
-    game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
+    game_builder.add_player("A".to_string());
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_falta_envido("B").is_ok());
     assert!(game.cantar_no_quiero("A").is_ok());
@@ -347,8 +355,8 @@ fn falta_envido_no_quiero() {
 #[test]
 fn envido_envido_no_quiero() {
     let mut game_builder = TrucoStateMachineBuilder::new();
-    game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
+    game_builder.add_player("A".to_string());
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_envido("B").is_ok());
     assert!(game.cantar_envido("A").is_ok());
@@ -373,8 +381,8 @@ fn envido_real_envido_no_quiero() {
 #[test]
 fn envido_envido_real_envido_no_quiero() {
     let mut game_builder = TrucoStateMachineBuilder::new();
-    game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
+    game_builder.add_player("A".to_string());
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_envido("B").is_ok());
     assert!(game.cantar_envido("A").is_ok());
@@ -387,8 +395,8 @@ fn envido_envido_real_envido_no_quiero() {
 #[test]
 fn envido_falta_envido_no_quiero() {
     let mut game_builder = TrucoStateMachineBuilder::new();
-    game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
+    game_builder.add_player("A".to_string());
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_envido("B").is_ok());
     assert!(game.cantar_falta_envido("A").is_ok());
@@ -413,8 +421,8 @@ fn real_envido_falta_envido_no_quiero() {
 #[test]
 fn envido_envido_falta_envido_no_quiero() {
     let mut game_builder = TrucoStateMachineBuilder::new();
-    game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
+    game_builder.add_player("A".to_string());
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_envido("B").is_ok());
     assert!(game.cantar_envido("A").is_ok());
@@ -427,8 +435,8 @@ fn envido_envido_falta_envido_no_quiero() {
 #[test]
 fn envido_real_envido_falta_envido_no_quiero() {
     let mut game_builder = TrucoStateMachineBuilder::new();
-    game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
+    game_builder.add_player("A".to_string());
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_envido("B").is_ok());
     assert!(game.cantar_real_envido("A").is_ok());
@@ -441,8 +449,8 @@ fn envido_real_envido_falta_envido_no_quiero() {
 #[test]
 fn envido_envido_real_envido_falta_envido_no_quiero() {
     let mut game_builder = TrucoStateMachineBuilder::new();
-    game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
+    game_builder.add_player("A".to_string());
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_envido("B").is_ok());
     assert!(game.cantar_envido("A").is_ok());
@@ -463,12 +471,12 @@ fn card_allowance_con_quieros() {
     assert!(game.cantar_truco("B").is_ok());
     assert!(game.cantar_envido("A").is_ok());
     assert!(game.tirar_carta("B").is_err());
-    assert!(game.cantar_envido("A").is_ok());
-    assert!(game.tirar_carta("B").is_err());
+    assert!(game.cantar_envido("B").is_ok());
+    assert!(game.tirar_carta("A").is_err());
     assert!(game.cantar_real_envido("A").is_ok());
     assert!(game.tirar_carta("B").is_err());
-    assert!(game.cantar_falta_envido("A").is_ok());
-    assert!(game.tirar_carta("B").is_err());
+    assert!(game.cantar_falta_envido("B").is_ok());
+    assert!(game.tirar_carta("A").is_err());
     assert!(game.cantar_quiero("A").is_ok());
     assert!(game.tirar_carta("B").is_ok());
     assert!(game.cantar_truco("A").is_ok());
@@ -485,26 +493,26 @@ fn card_allowance_con_quieros() {
 #[test]
 fn card_allowance() {
     let mut game_builder = TrucoStateMachineBuilder::new();
-    game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
+    game_builder.add_player("A".to_string());
     let mut game = game_builder.build().unwrap();
     assert!(game.tirar_carta("B").is_ok());
     assert!(game.cantar_truco("A").is_ok());
     assert!(game.cantar_envido("B").is_ok());
     assert!(game.tirar_carta("A").is_err());
-    assert!(game.cantar_envido("B").is_ok());
-    assert!(game.tirar_carta("A").is_err());
+    assert!(game.cantar_envido("A").is_ok());
+    assert!(game.tirar_carta("B").is_err());
     assert!(game.cantar_real_envido("B").is_ok());
     assert!(game.tirar_carta("A").is_err());
-    assert!(game.cantar_falta_envido("B").is_ok());
-    assert!(game.tirar_carta("A").is_err());
+    assert!(game.cantar_falta_envido("A").is_ok());
+    assert!(game.tirar_carta("B").is_err());
     assert!(game.cantar_quiero("B").is_ok());
     assert!(game.tirar_carta("A").is_ok());
     assert!(game.cantar_truco("B").is_ok());
     assert!(game.cantar_re_truco("A").is_ok());
-    assert!(game.tirar_carta("B").is_ok());
-    assert!(game.cantar_vale_cuatro("A").is_ok());
-    assert!(game.tirar_carta("B").is_ok());
-    assert!(game.cantar_quiero("A").is_err());
+    assert!(game.tirar_carta("B").is_err());
+    assert!(game.cantar_vale_cuatro("B").is_ok());
+    assert!(game.tirar_carta("B").is_err());
+    assert!(game.cantar_quiero("A").is_ok());
     assert!(game.tirar_carta("B").is_ok());
 }

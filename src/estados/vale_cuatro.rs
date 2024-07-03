@@ -1,15 +1,15 @@
 use super::{
-    r#final::Final, vale_cuatro_querido::ValeCuatroQuerido, Envidos, Players, TrucoState, Trucos,
+    r#final::Final, vale_cuatro_querido::ValeCuatroQuerido, Envidos, PlayersState, TrucoState, Trucos,
 };
 
 #[derive(Debug, Clone)]
 pub struct ValeCuatro {
     tantos: Envidos,
-    players: Players,
+    players: PlayersState,
 }
 
 impl ValeCuatro {
-    pub fn new(tantos: Envidos, players: Players) -> Self {
+    pub fn new(tantos: Envidos, players: PlayersState) -> Self {
         Self { tantos, players }
     }
 }
@@ -23,7 +23,7 @@ impl TrucoState for ValeCuatro {
         self: Box<Self>,
         player: &str,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_turn(player) {
+        if self.players.is_accepting(player) {
             Ok(Box::new(ValeCuatroQuerido::new(self.tantos, self.players)))
         } else {
             Err(self)
@@ -34,7 +34,7 @@ impl TrucoState for ValeCuatro {
         self: Box<Self>,
         player: &str,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_turn(player) {
+        if self.players.is_accepting(player) {
             Ok(Box::new(Final::new(self.tantos, Trucos::ReTruco)))
         } else {
             Err(self)
@@ -77,16 +77,8 @@ impl TrucoState for ValeCuatro {
         Err(self)
     }
 
-    fn tirar_carta(
-        mut self: Box<Self>,
-        player: &str,
-    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_turn(player) {
-            self.players.next_player();
-            Ok(Box::new(ValeCuatroQuerido::new(self.tantos, self.players)))
-        } else {
-            Err(self)
-        }
+    fn tirar_carta(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        Err(self)
     }
 
     fn tantos(&self) -> Result<Envidos, &str> {

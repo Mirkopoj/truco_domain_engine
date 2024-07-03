@@ -1,13 +1,13 @@
-use super::{r#final::Final, re_truco::ReTruco, Envidos, Players, TrucoState, Trucos};
+use super::{r#final::Final, re_truco::ReTruco, Envidos, PlayersState, TrucoState, Trucos};
 
 #[derive(Debug, Clone)]
 pub struct TrucoQuerido {
     tantos: Envidos,
-    players: Players,
+    players: PlayersState,
 }
 
 impl TrucoQuerido {
-    pub fn new(tantos: Envidos, players: Players) -> Self {
+    pub fn new(tantos: Envidos, players: PlayersState) -> Self {
         Self { tantos, players }
     }
 }
@@ -51,10 +51,11 @@ impl TrucoState for TrucoQuerido {
     }
 
     fn cantar_re_truco(
-        self: Box<Self>,
+        mut self: Box<Self>,
         player: &str,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_turn(player) {
+        if self.players.is_turn(player) && self.players.is_accepting(player) {
+            self.players.chalenges(player);
             Ok(Box::new(ReTruco::new(self.tantos, self.players)))
         } else {
             Err(self)
