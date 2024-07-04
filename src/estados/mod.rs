@@ -40,6 +40,7 @@ pub(super) trait TrucoState {
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
     fn tantos(&self) -> Result<Envidos, &str>;
     fn valor_ronda(&self) -> Result<Trucos, &str>;
+    fn valid_commands(&self, player: &str) -> Vec<String>;
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]

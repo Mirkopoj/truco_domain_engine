@@ -9,10 +9,18 @@ pub struct TrucoStateMachine {
 }
 
 impl TrucoStateMachine {
+    const NON_EXISTING_STATE: &'static str =
+        "Tried to use non existing state. This should never happend";
+
     /// # Errors
     /// # Panics
     pub fn irse_al_maso(&mut self) -> Result<(), &str> {
-        match self.internal_state.take().unwrap().irse_al_maso() {
+        match self
+            .internal_state
+            .take()
+            .expect(Self::NON_EXISTING_STATE)
+            .irse_al_maso()
+        {
             Ok(s) => {
                 self.internal_state.set(Some(s));
                 Ok(())
@@ -27,7 +35,12 @@ impl TrucoStateMachine {
     /// # Errors
     /// # Panics
     pub fn cantar_quiero(&mut self, player: &str) -> Result<(), &str> {
-        match self.internal_state.take().unwrap().cantar_quiero(player) {
+        match self
+            .internal_state
+            .take()
+            .expect(Self::NON_EXISTING_STATE)
+            .cantar_quiero(player)
+        {
             Ok(s) => {
                 self.internal_state.set(Some(s));
                 Ok(())
@@ -42,7 +55,12 @@ impl TrucoStateMachine {
     /// # Errors
     /// # Panics
     pub fn cantar_no_quiero(&mut self, player: &str) -> Result<(), &str> {
-        match self.internal_state.take().unwrap().cantar_no_quiero(player) {
+        match self
+            .internal_state
+            .take()
+            .expect(Self::NON_EXISTING_STATE)
+            .cantar_no_quiero(player)
+        {
             Ok(s) => {
                 self.internal_state.set(Some(s));
                 Ok(())
@@ -57,7 +75,12 @@ impl TrucoStateMachine {
     /// # Errors
     /// # Panics
     pub fn cantar_envido(&mut self, player: &str) -> Result<(), &str> {
-        match self.internal_state.take().unwrap().cantar_envido(player) {
+        match self
+            .internal_state
+            .take()
+            .expect(Self::NON_EXISTING_STATE)
+            .cantar_envido(player)
+        {
             Ok(s) => {
                 self.internal_state.set(Some(s));
                 Ok(())
@@ -75,7 +98,7 @@ impl TrucoStateMachine {
         match self
             .internal_state
             .take()
-            .unwrap()
+            .expect(Self::NON_EXISTING_STATE)
             .cantar_real_envido(player)
         {
             Ok(s) => {
@@ -95,7 +118,7 @@ impl TrucoStateMachine {
         match self
             .internal_state
             .take()
-            .unwrap()
+            .expect(Self::NON_EXISTING_STATE)
             .cantar_falta_envido(player)
         {
             Ok(s) => {
@@ -112,7 +135,12 @@ impl TrucoStateMachine {
     /// # Errors
     /// # Panics
     pub fn cantar_truco(&mut self, player: &str) -> Result<(), &str> {
-        match self.internal_state.take().unwrap().cantar_truco(player) {
+        match self
+            .internal_state
+            .take()
+            .expect(Self::NON_EXISTING_STATE)
+            .cantar_truco(player)
+        {
             Ok(s) => {
                 self.internal_state.set(Some(s));
                 Ok(())
@@ -127,7 +155,12 @@ impl TrucoStateMachine {
     /// # Errors
     /// # Panics
     pub fn cantar_re_truco(&mut self, player: &str) -> Result<(), &str> {
-        match self.internal_state.take().unwrap().cantar_re_truco(player) {
+        match self
+            .internal_state
+            .take()
+            .expect(Self::NON_EXISTING_STATE)
+            .cantar_re_truco(player)
+        {
             Ok(s) => {
                 self.internal_state.set(Some(s));
                 Ok(())
@@ -145,7 +178,7 @@ impl TrucoStateMachine {
         match self
             .internal_state
             .take()
-            .unwrap()
+            .expect(Self::NON_EXISTING_STATE)
             .cantar_vale_cuatro(player)
         {
             Ok(s) => {
@@ -162,7 +195,12 @@ impl TrucoStateMachine {
     /// # Errors
     /// # Panics
     pub fn tirar_carta(&mut self, player: &str) -> Result<(), &str> {
-        match self.internal_state.take().unwrap().tirar_carta(player) {
+        match self
+            .internal_state
+            .take()
+            .expect(Self::NON_EXISTING_STATE)
+            .tirar_carta(player)
+        {
             Ok(s) => {
                 self.internal_state.set(Some(s));
                 Ok(())
@@ -177,7 +215,11 @@ impl TrucoStateMachine {
     /// # Errors
     /// # Panics
     pub fn tantos(&mut self) -> Result<Envidos, &str> {
-        self.internal_state.get_mut().as_ref().unwrap().tantos()
+        self.internal_state
+            .get_mut()
+            .as_ref()
+            .expect(Self::NON_EXISTING_STATE)
+            .tantos()
     }
 
     /// # Errors
@@ -187,12 +229,21 @@ impl TrucoStateMachine {
             .internal_state
             .get_mut()
             .as_ref()
-            .unwrap()
+            .expect(Self::NON_EXISTING_STATE)
             .valor_ronda()
         {
             Ok(v) => Ok(v as u8),
             Err(e) => Err(e),
         }
+    }
+
+    /// # Panics
+    pub fn valid_commands(&mut self, player: &str) -> Vec<String> {
+        self.internal_state
+            .get_mut()
+            .as_ref()
+            .expect(Self::NON_EXISTING_STATE)
+            .valid_commands(player)
     }
 }
 

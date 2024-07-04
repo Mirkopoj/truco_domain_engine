@@ -116,4 +116,15 @@ impl TrucoState for EnvidoEnvido {
     fn valor_ronda(&self) -> Result<Trucos, &str> {
         Err("La ronda aun no a terminado.")
     }
+
+    fn valid_commands(&self, player: &str) -> Vec<String> {
+        let mut ret = vec!["irse_al_maso".to_string()];
+        if self.players.is_accepting(player) {
+            ret.push("cantar_quiero".to_string());
+            ret.push("cantar_no_quiero".to_string());
+            ret.push("cantar_real_envido".to_string());
+            ret.push("cantar_falta_envido".to_string());
+        }
+        ret
+    }
 }

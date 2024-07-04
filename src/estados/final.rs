@@ -24,7 +24,10 @@ impl TrucoState for Final {
         Err(self)
     }
 
-    fn cantar_no_quiero(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+    fn cantar_no_quiero(
+        self: Box<Self>,
+        _: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
         Err(self)
     }
 
@@ -32,11 +35,17 @@ impl TrucoState for Final {
         Err(self)
     }
 
-    fn cantar_real_envido(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+    fn cantar_real_envido(
+        self: Box<Self>,
+        _: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
         Err(self)
     }
 
-    fn cantar_falta_envido(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+    fn cantar_falta_envido(
+        self: Box<Self>,
+        _: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
         Err(self)
     }
 
@@ -44,11 +53,17 @@ impl TrucoState for Final {
         Err(self)
     }
 
-    fn cantar_re_truco(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+    fn cantar_re_truco(
+        self: Box<Self>,
+        _: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
         Err(self)
     }
 
-    fn cantar_vale_cuatro(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+    fn cantar_vale_cuatro(
+        self: Box<Self>,
+        _: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
         Err(self)
     }
 
@@ -62,5 +77,9 @@ impl TrucoState for Final {
 
     fn valor_ronda(&self) -> Result<Trucos, &str> {
         Ok(self.valor_ronda)
+    }
+
+    fn valid_commands(&self, _: &str) -> Vec<String> {
+        Vec::new()
     }
 }

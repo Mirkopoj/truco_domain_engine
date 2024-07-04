@@ -88,4 +88,15 @@ impl TrucoState for TrucoQuerido {
     fn valor_ronda(&self) -> Result<Trucos, &str> {
         Err("La ronda aun no a terminado.")
     }
+
+    fn valid_commands(&self, player: &str) -> Vec<String> {
+        let mut ret = vec!["irse_al_maso".to_string()];
+        if self.players.is_turn(player) {
+            ret.push("tirar_carta".to_string());
+            if self.players.is_accepting(player) {
+                ret.push("cantar_re_truco".to_string());
+            }
+        }
+        ret
+    }
 }
