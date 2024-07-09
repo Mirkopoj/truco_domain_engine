@@ -1,5 +1,7 @@
 use std::ops;
 
+use crate::carta::Carta;
+
 pub(super) trait TrucoState {
     fn irse_al_maso(self: Box<Self>) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
     fn cantar_quiero(
@@ -37,6 +39,7 @@ pub(super) trait TrucoState {
     fn tirar_carta(
         self: Box<Self>,
         player: &str,
+        card: Carta,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
     fn tantos(&self) -> Result<Envidos, &str>;
     fn valor_ronda(&self) -> Result<Trucos, &str>;
@@ -67,49 +70,6 @@ pub(super) enum Trucos {
     ValeCuatro = 4,
 }
 
-#[derive(Debug, Clone)]
-struct PlayersState {
-    cont: usize,
-    players: Vec<String>,
-    evens_accepting: bool,
-}
-
-impl PlayersState {
-    fn new(players: Vec<String>) -> Self {
-        Self {
-            cont: 0,
-            players,
-            evens_accepting: false,
-        }
-    }
-
-    fn is_turn(&self, player: &str) -> bool {
-        player == self.players[self.cont]
-    }
-
-    /// Returns true if that was the last player in
-    /// the round and the counter went back to 0
-    fn next_player(&mut self) -> bool {
-        self.cont += 1;
-        self.cont %= self.players.len();
-        self.cont == 0
-    }
-
-    fn is_accepting(&self, player: &str) -> bool {
-        if let Some(index) = self.players.iter().position(|p| p == player) {
-            (index % 2 == 0) == self.evens_accepting
-        } else {
-            false
-        }
-    }
-
-    fn chalenges(&mut self, player: &str) {
-        if let Some(index) = self.players.iter().position(|p| p == player) {
-            self.evens_accepting = index % 2 != 0;
-        }
-    }
-}
-
 mod envido;
 mod envido_envido;
 mod envido_va_primero;
@@ -124,6 +84,7 @@ mod truco;
 mod truco_querido;
 mod vale_cuatro;
 mod vale_cuatro_querido;
+mod player_state;
 
 #[cfg(test)]
-mod tests;
+mod tests;   

@@ -1,3 +1,5 @@
+use crate::carta::Carta;
+
 use super::{Envidos, TrucoState, Trucos};
 
 #[derive(Debug, Clone, Copy)]
@@ -67,7 +69,7 @@ impl TrucoState for Final {
         Err(self)
     }
 
-    fn tirar_carta(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+    fn tirar_carta(self: Box<Self>, _: &str, _: Carta) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
         Err(self)
     }
 

@@ -284,3 +284,4 @@ impl Default for TrucoStateMachineBuilder {
 }
 
 mod estados;
+mod carta;

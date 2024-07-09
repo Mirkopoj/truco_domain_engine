@@ -1,4 +1,6 @@
-use super::{nada::Nada, r#final::Final, Envidos, PlayersState, TrucoState, Trucos};
+use crate::carta::Carta;
+
+use super::{r#final::Final, nada::Nada, player_state::PlayersState, Envidos, TrucoState, Trucos};
 
 #[derive(Debug, Clone)]
 pub struct FaltaEnvido {
@@ -75,7 +77,7 @@ impl TrucoState for FaltaEnvido {
         Err(self)
     }
 
-    fn tirar_carta(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+    fn tirar_carta(self: Box<Self>, _: &str, _: Carta) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
         Err(self)
     }
 

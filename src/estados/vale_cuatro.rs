@@ -1,5 +1,8 @@
+use crate::carta::Carta;
+
 use super::{
-    r#final::Final, vale_cuatro_querido::ValeCuatroQuerido, Envidos, PlayersState, TrucoState, Trucos,
+    player_state::PlayersState, r#final::Final, vale_cuatro_querido::ValeCuatroQuerido, Envidos,
+    TrucoState, Trucos,
 };
 
 #[derive(Debug, Clone)]
@@ -77,7 +80,7 @@ impl TrucoState for ValeCuatro {
         Err(self)
     }
 
-    fn tirar_carta(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+    fn tirar_carta(self: Box<Self>, _: &str, _: Carta) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
         Err(self)
     }
 

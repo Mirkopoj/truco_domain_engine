@@ -1,4 +1,4 @@
-use super::{r#final::Final, Envidos, PlayersState, TrucoState, Trucos};
+use super::{player_state::PlayersState, r#final::Final, Envidos, TrucoState, Trucos};
 
 #[derive(Debug, Clone)]
 pub struct ValeCuatroQuerido {

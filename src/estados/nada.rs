@@ -1,4 +1,4 @@
-use super::{r#final::Final, truco::Truco, Envidos, PlayersState, TrucoState, Trucos};
+use super::{r#final::Final, player_state::PlayersState, truco::Truco, Envidos, TrucoState, Trucos};
 
 #[derive(Debug, Clone)]
 pub struct Nada {

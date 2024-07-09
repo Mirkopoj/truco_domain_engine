@@ -1,6 +1,8 @@
+use crate::carta::Carta;
+
 use super::{
-    envido_envido::EnvidoEnvido, falta_envido::FaltaEnvido, nada::Nada, r#final::Final,
-    real_envido::RealEnvido, Envidos, PlayersState, TrucoState, Trucos,
+    envido_envido::EnvidoEnvido, falta_envido::FaltaEnvido, nada::Nada, player_state::PlayersState,
+    r#final::Final, real_envido::RealEnvido, Envidos, TrucoState, Trucos,
 };
 
 #[derive(Debug, Clone)]
@@ -113,7 +115,7 @@ impl TrucoState for Envido {
         Err(self)
     }
 
-    fn tirar_carta(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+    fn tirar_carta(self: Box<Self>, _: &str, _: Carta) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
         Err(self)
     }
 

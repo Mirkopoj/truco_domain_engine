@@ -1,6 +1,9 @@
+use crate::carta::Carta;
+
 use super::{
     envido::Envido, envido_va_primero::EnvidoVaPrimero, falta_envido::FaltaEnvido, nada::Nada,
-    r#final::Final, real_envido::RealEnvido, Envidos, PlayersState, TrucoState, Trucos,
+    player_state::PlayersState, r#final::Final, real_envido::RealEnvido, Envidos, TrucoState,
+    Trucos,
 };
 
 #[derive(Debug, Clone)]
@@ -97,14 +100,17 @@ impl TrucoState for Inicial {
     fn tirar_carta(
         mut self: Box<Self>,
         player: &str,
+        card: Carta,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if !self.players.is_turn(player) {
-            return Err(self);
-        }
-        if self.players.next_player() {
-            Ok(Box::new(Nada::new(Envidos::Value(0), self.players)))
-        } else {
-            Ok(self)
+        match self.players.tirar_carta(player, card) {
+            Ok(end_of_round) => {
+                if end_of_round {
+                    Ok(Box::new(Nada::new(Envidos::Value(0), self.players)))
+                } else {
+                    Ok(self)
+                }
+            }
+            Err(_) => Err(self),
         }
     }
 
