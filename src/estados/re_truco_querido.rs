@@ -1,4 +1,9 @@
-use super::{r#final::Final, player_state::PlayersState, vale_cuatro::ValeCuatro, Envidos, TrucoState, Trucos};
+use crate::carta::Carta;
+
+use super::{
+    player_state::PlayersState, r#final::Final, vale_cuatro::ValeCuatro, Envidos, TrucoState,
+    Trucos,
+};
 
 #[derive(Debug, Clone)]
 pub struct ReTrucoQuerido {
@@ -72,12 +77,11 @@ impl TrucoState for ReTrucoQuerido {
     fn tirar_carta(
         mut self: Box<Self>,
         player: &str,
+        card: Carta,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        if self.players.is_turn(player) {
-            self.players.next_player();
-            Ok(self)
-        } else {
-            Err(self)
+        match self.players.tirar_carta(player, card) {
+            Ok(_) => Ok(self),
+            Err(_) => Err(self),
         }
     }
 

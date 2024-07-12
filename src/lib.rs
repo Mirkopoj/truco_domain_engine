@@ -1,5 +1,6 @@
 use std::cell::Cell;
 
+use carta::Carta;
 use estados::{inicial::Inicial, Envidos, TrucoState};
 
 const MAX_PLAYERS: usize = 6;
@@ -194,12 +195,12 @@ impl TrucoStateMachine {
 
     /// # Errors
     /// # Panics
-    pub fn tirar_carta(&mut self, player: &str) -> Result<(), &str> {
+    pub fn tirar_carta(&mut self, player: &str, card: Carta) -> Result<(), &str> {
         match self
             .internal_state
             .take()
             .expect(Self::NON_EXISTING_STATE)
-            .tirar_carta(player)
+            .tirar_carta(player, card)
         {
             Ok(s) => {
                 self.internal_state.set(Some(s));
@@ -283,5 +284,5 @@ impl Default for TrucoStateMachineBuilder {
     }
 }
 
-mod estados;
 mod carta;
+mod estados;

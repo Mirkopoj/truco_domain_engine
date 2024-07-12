@@ -1,4 +1,7 @@
-use crate::{Envidos, TrucoStateMachineBuilder};
+use crate::{
+    carta::{Carta, Numero, Palo},
+    Envidos, TrucoStateMachineBuilder,
+};
 
 #[test]
 fn inicial() {
@@ -55,7 +58,9 @@ fn re_truco_con_quiero() {
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_truco("B").is_ok());
     assert!(game.cantar_quiero("A").is_ok());
-    assert!(game.tirar_carta("B").is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Dos, Palo::Oro))
+        .is_ok());
     assert!(game.cantar_re_truco("A").is_ok());
     assert!(game.cantar_quiero("B").is_ok());
     assert_eq!(Ok(()), game.irse_al_maso());
@@ -86,10 +91,14 @@ fn vale_cuatro_con_quiero() {
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_truco("B").is_ok());
     assert!(game.cantar_quiero("A").is_ok());
-    assert!(game.tirar_carta("B").is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Dos, Palo::Oro))
+        .is_ok());
     assert!(game.cantar_re_truco("A").is_ok());
     assert!(game.cantar_quiero("B").is_ok());
-    assert!(game.tirar_carta("A").is_ok());
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Cuatro, Palo::Oro))
+        .is_ok());
     assert!(game.cantar_vale_cuatro("B").is_ok());
     assert!(game.cantar_quiero("A").is_ok());
     assert_eq!(Ok(()), game.irse_al_maso());
@@ -275,7 +284,9 @@ fn re_truco_con_quiero_no_quiero() {
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_truco("A").is_ok());
     assert!(game.cantar_quiero("B").is_ok());
-    assert!(game.tirar_carta("A").is_ok());
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Dos, Palo::Oro))
+        .is_ok());
     assert!(game.cantar_re_truco("B").is_ok());
     assert!(game.cantar_no_quiero("A").is_ok());
     assert_eq!(game.tantos(), Ok(Envidos::Value(0)));
@@ -306,10 +317,14 @@ fn vale_cuatro_con_quiero_no_quiero() {
     assert!(game.cantar_quiero("A").is_ok());
     assert!(game.cantar_re_truco("B").is_err());
     assert!(game.cantar_re_truco("A").is_err());
-    assert!(game.tirar_carta("B").is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Dos, Palo::Oro))
+        .is_ok());
     assert!(game.cantar_re_truco("A").is_ok());
     assert!(game.cantar_quiero("B").is_ok());
-    assert!(game.tirar_carta("A").is_ok());
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Cuatro, Palo::Oro))
+        .is_ok());
     assert!(game.cantar_vale_cuatro("B").is_ok());
     assert!(game.cantar_no_quiero("A").is_ok());
     assert_eq!(game.tantos(), Ok(Envidos::Value(0)));
@@ -467,27 +482,45 @@ fn card_allowance_con_quieros() {
     game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
     let mut game = game_builder.build().unwrap();
-    assert!(game.tirar_carta("A").is_ok());
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Dos, Palo::Oro))
+        .is_ok());
     assert!(game.cantar_truco("B").is_ok());
     assert!(game.cantar_envido("A").is_ok());
-    assert!(game.tirar_carta("B").is_err());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Tres, Palo::Oro))
+        .is_err());
     assert!(game.cantar_envido("B").is_ok());
-    assert!(game.tirar_carta("A").is_err());
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Cuatro, Palo::Oro))
+        .is_err());
     assert!(game.cantar_real_envido("A").is_ok());
-    assert!(game.tirar_carta("B").is_err());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Cinco, Palo::Oro))
+        .is_err());
     assert!(game.cantar_falta_envido("B").is_ok());
-    assert!(game.tirar_carta("A").is_err());
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Seis, Palo::Oro))
+        .is_err());
     assert!(game.cantar_quiero("A").is_ok());
-    assert!(game.tirar_carta("B").is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Sota, Palo::Oro))
+        .is_ok());
     assert!(game.cantar_truco("A").is_ok());
     assert!(game.cantar_quiero("B").is_ok());
-    assert!(game.tirar_carta("A").is_ok());
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Siete, Palo::Oro))
+        .is_ok());
     assert!(game.cantar_re_truco("B").is_ok());
     assert!(game.cantar_quiero("A").is_ok());
-    assert!(game.tirar_carta("B").is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Caballo, Palo::Oro))
+        .is_ok());
     assert!(game.cantar_vale_cuatro("A").is_ok());
     assert!(game.cantar_quiero("B").is_ok());
-    assert!(game.tirar_carta("A").is_ok());
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Rey, Palo::Oro))
+        .is_ok());
 }
 
 #[test]
@@ -496,23 +529,41 @@ fn card_allowance() {
     game_builder.add_player("B".to_string());
     game_builder.add_player("A".to_string());
     let mut game = game_builder.build().unwrap();
-    assert!(game.tirar_carta("B").is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Dos, Palo::Oro))
+        .is_ok());
     assert!(game.cantar_truco("A").is_ok());
     assert!(game.cantar_envido("B").is_ok());
-    assert!(game.tirar_carta("A").is_err());
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Tres, Palo::Oro))
+        .is_err());
     assert!(game.cantar_envido("A").is_ok());
-    assert!(game.tirar_carta("B").is_err());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Cuatro, Palo::Oro))
+        .is_err());
     assert!(game.cantar_real_envido("B").is_ok());
-    assert!(game.tirar_carta("A").is_err());
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Cinco, Palo::Oro))
+        .is_err());
     assert!(game.cantar_falta_envido("A").is_ok());
-    assert!(game.tirar_carta("B").is_err());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Seis, Palo::Oro))
+        .is_err());
     assert!(game.cantar_quiero("B").is_ok());
-    assert!(game.tirar_carta("A").is_ok());
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Sota, Palo::Oro))
+        .is_ok());
     assert!(game.cantar_truco("B").is_ok());
     assert!(game.cantar_re_truco("A").is_ok());
-    assert!(game.tirar_carta("B").is_err());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Sota, Palo::Oro))
+        .is_err());
     assert!(game.cantar_vale_cuatro("B").is_ok());
-    assert!(game.tirar_carta("B").is_err());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Caballo, Palo::Oro))
+        .is_err());
     assert!(game.cantar_quiero("A").is_ok());
-    assert!(game.tirar_carta("B").is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Rey, Palo::Oro))
+        .is_ok());
 }
