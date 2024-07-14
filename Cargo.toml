@@ -1,7 +1,8 @@
 [package]
-name = "truco_state_pattern"
+name = "truco_domain_engine"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 enum-iterator = "2.1.0"
+rand = "0.8.5"
