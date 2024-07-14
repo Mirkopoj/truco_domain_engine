@@ -1,12 +1,12 @@
 use std::cell::Cell;
 
-use crate::carta::Carta;
+use crate::{carta::Carta, envidos::Envidos};
 use crate::equipos::Equipo;
-use estados::{inicial::Inicial, Envidos, TrucoState};
+use estados::{inicial::Inicial, TrucoState};
 
 const MAX_PLAYERS: usize = 6;
 
-pub struct TrucoStateMachine {
+pub(super) struct TrucoStateMachine {
     internal_state: Cell<Option<Box<dyn TrucoState>>>,
 }
 
@@ -16,7 +16,7 @@ impl TrucoStateMachine {
 
     /// # Errors
     /// # Panics
-    pub fn irse_al_maso(&mut self, player: &str) -> Result<(), &str> {
+    pub fn irse_al_maso(&mut self, player: &str) -> Result<(), &'static str> {
         match self
             .internal_state
             .take()
@@ -36,7 +36,7 @@ impl TrucoStateMachine {
 
     /// # Errors
     /// # Panics
-    pub fn cantar_quiero(&mut self, player: &str) -> Result<(), &str> {
+    pub fn cantar_quiero(&mut self, player: &str) -> Result<(), &'static str> {
         match self
             .internal_state
             .take()
@@ -56,7 +56,7 @@ impl TrucoStateMachine {
 
     /// # Errors
     /// # Panics
-    pub fn cantar_no_quiero(&mut self, player: &str) -> Result<(), &str> {
+    pub fn cantar_no_quiero(&mut self, player: &str) -> Result<(), &'static str> {
         match self
             .internal_state
             .take()
@@ -76,7 +76,7 @@ impl TrucoStateMachine {
 
     /// # Errors
     /// # Panics
-    pub fn cantar_envido(&mut self, player: &str) -> Result<(), &str> {
+    pub fn cantar_envido(&mut self, player: &str) -> Result<(), &'static str> {
         match self
             .internal_state
             .take()
@@ -96,7 +96,7 @@ impl TrucoStateMachine {
 
     /// # Errors
     /// # Panics
-    pub fn cantar_real_envido(&mut self, player: &str) -> Result<(), &str> {
+    pub fn cantar_real_envido(&mut self, player: &str) -> Result<(), &'static str> {
         match self
             .internal_state
             .take()
@@ -116,7 +116,7 @@ impl TrucoStateMachine {
 
     /// # Errors
     /// # Panics
-    pub fn cantar_falta_envido(&mut self, player: &str) -> Result<(), &str> {
+    pub fn cantar_falta_envido(&mut self, player: &str) -> Result<(), &'static str> {
         match self
             .internal_state
             .take()
@@ -136,7 +136,7 @@ impl TrucoStateMachine {
 
     /// # Errors
     /// # Panics
-    pub fn cantar_truco(&mut self, player: &str) -> Result<(), &str> {
+    pub fn cantar_truco(&mut self, player: &str) -> Result<(), &'static str> {
         match self
             .internal_state
             .take()
@@ -156,7 +156,7 @@ impl TrucoStateMachine {
 
     /// # Errors
     /// # Panics
-    pub fn cantar_re_truco(&mut self, player: &str) -> Result<(), &str> {
+    pub fn cantar_re_truco(&mut self, player: &str) -> Result<(), &'static str> {
         match self
             .internal_state
             .take()
@@ -176,7 +176,7 @@ impl TrucoStateMachine {
 
     /// # Errors
     /// # Panics
-    pub fn cantar_vale_cuatro(&mut self, player: &str) -> Result<(), &str> {
+    pub fn cantar_vale_cuatro(&mut self, player: &str) -> Result<(), &'static str> {
         match self
             .internal_state
             .take()
@@ -196,7 +196,7 @@ impl TrucoStateMachine {
 
     /// # Errors
     /// # Panics
-    pub fn tirar_carta(&mut self, player: &str, card: Carta) -> Result<(), &str> {
+    pub fn tirar_carta(&mut self, player: &str, card: Carta) -> Result<(), &'static str> {
         match self
             .internal_state
             .take()
@@ -216,7 +216,7 @@ impl TrucoStateMachine {
 
     /// # Errors
     /// # Panics
-    pub fn tantos(&mut self) -> Result<Envidos, &str> {
+    pub fn tantos(&mut self) -> Result<Envidos, &'static str> {
         self.internal_state
             .get_mut()
             .as_ref()
@@ -226,7 +226,7 @@ impl TrucoStateMachine {
 
     /// # Errors
     /// # Panics
-    pub fn valor_ronda(&mut self) -> Result<u8, &str> {
+    pub fn valor_ronda(&mut self) -> Result<u8, &'static str> {
         match self
             .internal_state
             .get_mut()
@@ -240,7 +240,7 @@ impl TrucoStateMachine {
     }
 
     /// # Panics
-    pub fn valid_commands(&mut self, player: &str) -> Vec<String> {
+    pub fn valid_commands(&mut self, player: &'static str) -> Vec<String> {
         self.internal_state
             .get_mut()
             .as_ref()
@@ -250,7 +250,7 @@ impl TrucoStateMachine {
 
     /// # Errors
     /// # Panics
-    pub fn winner(&mut self) -> Result<Option<Equipo>, &str> {
+    pub fn winner(&mut self) -> Result<Option<Equipo>, &'static str> {
         self.internal_state
             .get_mut()
             .as_ref()
@@ -260,7 +260,7 @@ impl TrucoStateMachine {
 }
 
 #[derive(Debug)]
-pub struct TrucoStateMachineBuilder {
+pub(super) struct TrucoStateMachineBuilder {
     players: Vec<String>,
 }
 

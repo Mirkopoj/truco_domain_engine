@@ -1,7 +1,6 @@
 use crate::{
     carta::{Carta, Numero, Palo},
-    equipos::Equipo,
-    Envidos, TrucoStateMachineBuilder,
+    equipos::Equipo, maquina_de_estados::{estados::Envidos, TrucoStateMachineBuilder},
 };
 
 #[test]
@@ -515,7 +514,10 @@ fn card_allowance_con_quieros() {
     assert!(game.cantar_re_truco("B").is_ok());
     assert!(game.cantar_quiero("A").is_ok());
     assert!(game
-        .tirar_carta("B", Carta::new(Numero::Caballo, Palo::Oro))
+        .tirar_carta("B", Carta::new(Numero::Siete, Palo::Espada))
+        .is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Cuatro, Palo::Espada))
         .is_ok());
     assert!(game.cantar_vale_cuatro("A").is_ok());
     assert!(game.cantar_quiero("B").is_ok());

@@ -79,11 +79,11 @@ impl TrucoState for Final {
         Err(self)
     }
 
-    fn tantos(&self) -> Result<Envidos, &str> {
+    fn tantos(&self) -> Result<Envidos, &'static str> {
         Ok(self.tantos)
     }
 
-    fn valor_ronda(&self) -> Result<Trucos, &str> {
+    fn valor_ronda(&self) -> Result<Trucos, &'static str> {
         Ok(self.valor_ronda)
     }
 
@@ -91,7 +91,7 @@ impl TrucoState for Final {
         Vec::new()
     }
 
-    fn winner(&self) -> Result<Option<Equipo>, &str> {
+    fn winner(&self) -> Result<Option<Equipo>, &'static str> {
         Ok(self.winner)
     }
 }

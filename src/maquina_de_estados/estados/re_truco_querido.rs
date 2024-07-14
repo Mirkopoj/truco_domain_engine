@@ -106,11 +106,11 @@ impl TrucoState for ReTrucoQuerido {
         }
     }
 
-    fn tantos(&self) -> Result<Envidos, &str> {
+    fn tantos(&self) -> Result<Envidos, &'static str> {
         Ok(self.tantos)
     }
 
-    fn valor_ronda(&self) -> Result<Trucos, &str> {
+    fn valor_ronda(&self) -> Result<Trucos, &'static str> {
         Err("La ronda aun no a terminado.")
     }
 
@@ -125,7 +125,7 @@ impl TrucoState for ReTrucoQuerido {
         ret
     }
 
-    fn winner(&self) -> Result<Option<Equipo>, &str> {
+    fn winner(&self) -> Result<Option<Equipo>, &'static str> {
         Err("La ronda aun no a terminado.")
     }
 }

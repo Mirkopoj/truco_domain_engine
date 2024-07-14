@@ -96,11 +96,11 @@ impl TrucoState for FaltaEnvido {
         Err(self)
     }
 
-    fn tantos(&self) -> Result<Envidos, &str> {
+    fn tantos(&self) -> Result<Envidos, &'static str> {
         Err("El envido aun no se termina de cantar.")
     }
 
-    fn valor_ronda(&self) -> Result<Trucos, &str> {
+    fn valor_ronda(&self) -> Result<Trucos, &'static str> {
         Err("La ronda aun no a terminado.")
     }
 
@@ -117,7 +117,7 @@ impl TrucoState for FaltaEnvido {
         ret
     }
 
-    fn winner(&self) -> Result<Option<Equipo>, &str> {
+    fn winner(&self) -> Result<Option<Equipo>, &'static str> {
         Err("La ronda aun no a terminado.")
     }
 }

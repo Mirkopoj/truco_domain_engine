@@ -1,6 +1,4 @@
-use std::ops;
-
-use crate::{carta::Carta, equipos::Equipo};
+use crate::{carta::Carta, envidos::Envidos, equipos::Equipo};
 
 pub(super) trait TrucoState {
     fn irse_al_maso(
@@ -44,26 +42,10 @@ pub(super) trait TrucoState {
         player: &str,
         card: Carta,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
-    fn tantos(&self) -> Result<Envidos, &str>;
-    fn valor_ronda(&self) -> Result<Trucos, &str>;
+    fn tantos(&self) -> Result<Envidos, &'static str>;
+    fn valor_ronda(&self) -> Result<Trucos, &'static str>;
     fn valid_commands(&self, player: &str) -> Vec<String>;
-    fn winner(&self) -> Result<Option<Equipo>, &str>;
-}
-
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub enum Envidos {
-    Value(u8),
-    Falta,
-}
-
-impl ops::Add<u8> for Envidos {
-    type Output = Envidos;
-    fn add(self, rh: u8) -> Envidos {
-        match self {
-            Envidos::Value(e) => Envidos::Value(e + rh),
-            Envidos::Falta => self,
-        }
-    }
+    fn winner(&self) -> Result<Option<Equipo>, &'static str>;
 }
 
 #[derive(Debug, Clone, Copy)]

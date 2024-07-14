@@ -131,11 +131,11 @@ impl TrucoState for Envido {
         Err(self)
     }
 
-    fn tantos(&self) -> std::result::Result<Envidos, &str> {
+    fn tantos(&self) -> std::result::Result<Envidos, &'static str> {
         Err("El envido aun no se termina de cantar.")
     }
 
-    fn valor_ronda(&self) -> std::result::Result<Trucos, &str> {
+    fn valor_ronda(&self) -> std::result::Result<Trucos, &'static str> {
         Err("La ronda aun no a terminado.")
     }
 
@@ -151,7 +151,7 @@ impl TrucoState for Envido {
         ret
     }
 
-    fn winner(&self) -> Result<Option<Equipo>, &str> {
+    fn winner(&self) -> Result<Option<Equipo>, &'static str> {
         Err("La ronda aun no a terminado.")
     }
 }

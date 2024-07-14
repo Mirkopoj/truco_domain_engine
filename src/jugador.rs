@@ -17,4 +17,8 @@ impl Jugador {
     pub fn dar_mano(&mut self, mano: [Carta; 3]) {
         self.mano = mano.map(Some);
     }
+
+    pub fn nombre(&self) -> String {
+        self.nombre.clone()
+    }
 }

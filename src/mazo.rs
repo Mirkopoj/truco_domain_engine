@@ -7,6 +7,7 @@ use crate::{
     jugador::Jugador,
 };
 
+#[derive(Debug)]
 pub struct Mazo {
     cartas: Vec<Carta>,
 }
