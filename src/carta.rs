@@ -9,7 +9,7 @@ pub enum Palo {
     Copa,
 }
 
-#[derive(Sequence, Debug, Clone, Copy)]
+#[derive(Sequence, Debug, Clone, Copy, PartialEq)]
 pub enum Numero {
     Ancho,
     Dos,
@@ -23,7 +23,7 @@ pub enum Numero {
     Rey,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Carta {
     palo: Palo,
     numero: Numero,

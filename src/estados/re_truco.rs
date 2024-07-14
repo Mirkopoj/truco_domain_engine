@@ -1,4 +1,4 @@
-use crate::carta::Carta;
+use crate::{carta::Carta, equipos::Equipo};
 
 use super::{
     player_state::PlayersState, r#final::Final, re_truco_querido::ReTrucoQuerido,
@@ -18,8 +18,19 @@ impl ReTruco {
 }
 
 impl TrucoState for ReTruco {
-    fn irse_al_maso(self: Box<Self>) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        Ok(Box::new(Final::new(self.tantos, Trucos::Truco)))
+    fn irse_al_maso(
+        self: Box<Self>,
+        player: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        let players_team = self.players.team(player);
+        match players_team {
+            Ok(players_team) => Ok(Box::new(Final::new(
+                self.tantos,
+                Trucos::Truco,
+                Some(!players_team),
+            ))),
+            Err(_) => Err(self),
+        }
     }
 
     fn cantar_quiero(
@@ -38,7 +49,15 @@ impl TrucoState for ReTruco {
         player: &str,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
         if self.players.is_accepting(player) {
-            Ok(Box::new(Final::new(self.tantos, Trucos::Truco)))
+            let players_team = self.players.team(player);
+            match players_team {
+                Ok(players_team) => Ok(Box::new(Final::new(
+                    self.tantos,
+                    Trucos::Truco,
+                    Some(!players_team),
+                ))),
+                Err(_) => Err(self),
+            }
         } else {
             Err(self)
         }
@@ -85,7 +104,11 @@ impl TrucoState for ReTruco {
         }
     }
 
-    fn tirar_carta(self: Box<Self>, _: &str, _: Carta) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+    fn tirar_carta(
+        self: Box<Self>,
+        _: &str,
+        _: Carta,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
         Err(self)
     }
 
@@ -105,5 +128,9 @@ impl TrucoState for ReTruco {
             ret.push("cantar_vale_cuatro".to_string());
         }
         ret
+    }
+
+    fn winner(&self) -> Result<Option<Equipo>, &str> {
+        Err("La ronda aun no a terminado.")
     }
 }

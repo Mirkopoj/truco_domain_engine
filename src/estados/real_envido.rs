@@ -1,4 +1,4 @@
-use crate::carta::Carta;
+use crate::{carta::Carta, equipos::Equipo};
 
 use super::{
     falta_envido::FaltaEnvido, nada::Nada, player_state::PlayersState, r#final::Final, Envidos,
@@ -21,8 +21,19 @@ impl RealEnvido {
 }
 
 impl TrucoState for RealEnvido {
-    fn irse_al_maso(self: Box<Self>) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        Ok(Box::new(Final::new(self.tantos, Trucos::Simple)))
+    fn irse_al_maso(
+        self: Box<Self>,
+        player: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        let players_team = self.players.team(player);
+        match players_team {
+            Ok(players_team) => Ok(Box::new(Final::new(
+                self.tantos,
+                Trucos::Simple,
+                Some(!players_team),
+            ))),
+            Err(_) => Err(self),
+        }
     }
 
     fn cantar_quiero(
@@ -117,5 +128,9 @@ impl TrucoState for RealEnvido {
             ret.push("cantar_falta_envido".to_string());
         }
         ret
+    }
+
+    fn winner(&self) -> Result<Option<Equipo>, &str> {
+        Err("La ronda aun no a terminado.")
     }
 }

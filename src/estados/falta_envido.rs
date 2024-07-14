@@ -1,6 +1,6 @@
-use crate::carta::Carta;
+use crate::{carta::Carta, equipos::Equipo};
 
-use super::{r#final::Final, nada::Nada, player_state::PlayersState, Envidos, TrucoState, Trucos};
+use super::{nada::Nada, player_state::PlayersState, r#final::Final, Envidos, TrucoState, Trucos};
 
 #[derive(Debug, Clone)]
 pub struct FaltaEnvido {
@@ -15,8 +15,19 @@ impl FaltaEnvido {
 }
 
 impl TrucoState for FaltaEnvido {
-    fn irse_al_maso(self: Box<Self>) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        Ok(Box::new(Final::new(self.tantos, Trucos::Simple)))
+    fn irse_al_maso(
+        self: Box<Self>,
+        player: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        let players_team = self.players.team(player);
+        match players_team {
+            Ok(players_team) => Ok(Box::new(Final::new(
+                self.tantos,
+                Trucos::Simple,
+                Some(!players_team),
+            ))),
+            Err(_) => Err(self),
+        }
     }
 
     fn cantar_quiero(
@@ -77,7 +88,11 @@ impl TrucoState for FaltaEnvido {
         Err(self)
     }
 
-    fn tirar_carta(self: Box<Self>, _: &str, _: Carta) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+    fn tirar_carta(
+        self: Box<Self>,
+        _: &str,
+        _: Carta,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
         Err(self)
     }
 
@@ -100,5 +115,9 @@ impl TrucoState for FaltaEnvido {
             ret.push("cantar_re_truco".to_string());
         }
         ret
+    }
+
+    fn winner(&self) -> Result<Option<Equipo>, &str> {
+        Err("La ronda aun no a terminado.")
     }
 }

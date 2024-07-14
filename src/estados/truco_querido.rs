@@ -1,4 +1,4 @@
-use crate::carta::Carta;
+use crate::{carta::Carta, equipos::Equipo};
 
 use super::{
     player_state::PlayersState, r#final::Final, re_truco::ReTruco, Envidos, TrucoState, Trucos,
@@ -17,8 +17,19 @@ impl TrucoQuerido {
 }
 
 impl TrucoState for TrucoQuerido {
-    fn irse_al_maso(self: Box<Self>) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        Ok(Box::new(Final::new(self.tantos, Trucos::Truco)))
+    fn irse_al_maso(
+        self: Box<Self>,
+        player: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        let players_team = self.players.team(player);
+        match players_team {
+            Ok(players_team) => Ok(Box::new(Final::new(
+                self.tantos,
+                Trucos::Truco,
+                Some(!players_team),
+            ))),
+            Err(_) => Err(self),
+        }
     }
 
     fn cantar_quiero(self: Box<Self>, _: &str) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
@@ -79,8 +90,18 @@ impl TrucoState for TrucoQuerido {
         card: Carta,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
         match self.players.tirar_carta(player, card) {
-            Ok(_) => Ok(self),
-            Err(_) => Err(self),
+            Ok(round_ending) => {
+                if let Some(Some(sub_game_ending)) = round_ending {
+                    Ok(Box::new(Final::new(
+                        self.tantos,
+                        Trucos::Simple,
+                        sub_game_ending,
+                    )))
+                } else {
+                    Ok(self)
+                }
+            }
+            Err(()) => Err(self),
         }
     }
 
@@ -101,5 +122,9 @@ impl TrucoState for TrucoQuerido {
             }
         }
         ret
+    }
+
+    fn winner(&self) -> Result<Option<Equipo>, &str> {
+        Err("La ronda aun no a terminado.")
     }
 }

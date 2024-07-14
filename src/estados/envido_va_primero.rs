@@ -1,4 +1,4 @@
-use crate::carta::Carta;
+use crate::{carta::Carta, equipos::Equipo};
 
 use super::{
     envido::Envido, falta_envido::FaltaEnvido, player_state::PlayersState, r#final::Final,
@@ -18,8 +18,19 @@ impl EnvidoVaPrimero {
 }
 
 impl TrucoState for EnvidoVaPrimero {
-    fn irse_al_maso(self: Box<Self>) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        Ok(Box::new(Final::new(Envidos::Value(0), Trucos::Simple)))
+    fn irse_al_maso(
+        self: Box<Self>,
+        player: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        let players_team = self.players.team(player);
+        match players_team {
+            Ok(players_team) => Ok(Box::new(Final::new(
+                Envidos::Value(0),
+                Trucos::Simple,
+                Some(!players_team),
+            ))),
+            Err(_) => Err(self),
+        }
     }
 
     fn cantar_quiero(
@@ -38,7 +49,15 @@ impl TrucoState for EnvidoVaPrimero {
         player: &str,
     ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
         if self.players.is_accepting(player) {
-            Ok(Box::new(Final::new(Envidos::Value(0), Trucos::Simple)))
+            let players_team = self.players.team(player);
+            match players_team {
+                Ok(players_team) => Ok(Box::new(Final::new(
+                    Envidos::Value(0),
+                    Trucos::Simple,
+                    Some(!players_team),
+                ))),
+                Err(_) => Err(self),
+            }
         } else {
             Err(self)
         }
@@ -103,7 +122,11 @@ impl TrucoState for EnvidoVaPrimero {
         Err(self)
     }
 
-    fn tirar_carta(self: Box<Self>, _: &str, _: Carta) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+    fn tirar_carta(
+        self: Box<Self>,
+        _: &str,
+        _: Carta,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
         Err(self)
     }
 
@@ -126,5 +149,9 @@ impl TrucoState for EnvidoVaPrimero {
             ret.push("cantar_re_truco".to_string());
         }
         ret
+    }
+
+    fn winner(&self) -> Result<Option<Equipo>, &str> {
+        Err("La ronda aun no a terminado.")
     }
 }

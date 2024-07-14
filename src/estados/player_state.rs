@@ -1,4 +1,4 @@
-use crate::carta::Carta;
+use crate::{carta::Carta, equipos::Equipo};
 
 #[derive(Debug, Clone)]
 struct PlayerThrownCard {
@@ -11,8 +11,14 @@ pub(super) struct PlayersState {
     cont: usize,
     initial: usize,
     players: Vec<PlayerThrownCard>,
+    prev_cards: Vec<Carta>,
     evens_accepting: bool,
+    round_winners: Vec<Option<Equipo>>,
 }
+
+type RoundEnding = Option<SubGameEnded>;
+type SubGameEnded = Option<SubGameEndedWinner>;
+type SubGameEndedWinner = Option<Equipo>;
 
 impl PlayersState {
     pub(super) fn new(players: Vec<String>) -> Self {
@@ -26,7 +32,9 @@ impl PlayersState {
                     card: None,
                 })
                 .collect(),
+            prev_cards: Vec::new(),
             evens_accepting: false,
+            round_winners: Vec::new(),
         }
     }
 
@@ -36,7 +44,7 @@ impl PlayersState {
 
     /// Returns true if that was the last player in
     /// the round and the counter went back to 0
-    pub(super) fn next_player(&mut self) -> bool {
+    fn next_player(&mut self) -> bool {
         self.cont += 1;
         self.cont %= self.players.len();
         self.cont == self.initial
@@ -56,29 +64,97 @@ impl PlayersState {
         }
     }
 
-    pub(super) fn tirar_carta(&mut self, player: &str, card: Carta) -> Result<bool, ()> {
-        if !self.is_turn(player) {
+    fn was_played_peviosly(&self, card: Carta) -> bool {
+        self.players
+            .iter()
+            .filter_map(|p| p.card)
+            .chain(self.prev_cards.iter().copied())
+            .any(|c| c == card)
+    }
+
+    fn best_card(&self) -> (usize, Carta) {
+        self.players
+            .iter()
+            .enumerate()
+            .rev()
+            .filter_map(|(i, p)| p.card.map(|c| (i, c)))
+            .max_by(|(_, x), (_, y)| x.valor_juego().cmp(&y.valor_juego()))
+            .expect("Players Shoudn't be empty")
+    }
+
+    fn round_has_winner(&self, best_card: Carta) -> bool {
+        self.players
+            .iter()
+            .filter_map(|p| p.card)
+            .filter(|c| c.valor_juego() == best_card.valor_juego())
+            .count()
+            == 1
+    }
+
+    //Pardas 3ra gana 1ra probablemente está mal.
+    fn sub_game_ended(&self) -> SubGameEnded {
+        if self.round_winners.len() < 2 {
+            return None;
+        }
+        let wins = self.round_winners.iter().filter_map(|&w| w);
+        let ellos = wins.clone().filter(|&w| matches!(w, Equipo::Ellos)).count();
+        let nosotros = wins.filter(|&w| matches!(w, Equipo::Nosotros)).count();
+        match ellos.cmp(&nosotros) {
+            std::cmp::Ordering::Less => Some(Some(Equipo::Nosotros)),
+            std::cmp::Ordering::Equal => {
+                if self.round_winners.len() > 2 {
+                    Some(None)
+                } else {
+                    None
+                }
+            }
+            std::cmp::Ordering::Greater => Some(Some(Equipo::Ellos)),
+        }
+    }
+
+    pub(super) fn tirar_carta(&mut self, player: &str, card: Carta) -> Result<RoundEnding, ()> {
+        if !self.is_turn(player) || self.was_played_peviosly(card) {
             return Err(());
         }
         self.players[self.cont].card = Some(card);
-        let ret = self.next_player();
-        if ret {
-            self.initial = self
-                .players
-                .iter()
-                .map(|p| {
-                    p.card
-                        .expect("All players should allready have their cards thrown")
+        let ret = if self.next_player() {
+            let (best_cards_position, best_card) = self.best_card();
+            let winner = if self.round_has_winner(best_card) {
+                Some(if best_cards_position % 2 == 0 {
+                    Equipo::Nosotros
+                } else {
+                    Equipo::Ellos
                 })
-                .enumerate()
-                .max_by(|(_, x), (_, y)| x.valor_juego().cmp(&y.valor_juego()))
-                .expect("Players Shoudn't be empty")
-                .0;
+            } else {
+                None
+            };
+            self.round_winners.push(winner);
+            self.initial = best_cards_position;
             self.cont = self.initial;
             self.players.iter_mut().for_each(|player| {
-                player.card = None;
+                self.prev_cards.push(
+                    player
+                        .card
+                        .take()
+                        .expect("All players should allready have their cards thrown"),
+                );
             });
-        }
+            Some(self.sub_game_ended())
+        } else {
+            None
+        };
         Ok(ret)
+    }
+
+    pub(super) fn team(&self, player: &str) -> Result<Equipo, &str> {
+        if let Some(index) = self.players.iter().position(|p| p.name == player) {
+            Ok(if index % 2 == 0 {
+                Equipo::Nosotros
+            } else {
+                Equipo::Ellos
+            })
+        } else {
+            Err("Non Existing player")
+        }
     }
 }

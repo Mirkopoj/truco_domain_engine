@@ -1,9 +1,12 @@
 use std::ops;
 
-use crate::carta::Carta;
+use crate::{carta::Carta, equipos::Equipo};
 
 pub(super) trait TrucoState {
-    fn irse_al_maso(self: Box<Self>) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
+    fn irse_al_maso(
+        self: Box<Self>,
+        player: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>>;
     fn cantar_quiero(
         self: Box<Self>,
         player: &str,
@@ -44,6 +47,7 @@ pub(super) trait TrucoState {
     fn tantos(&self) -> Result<Envidos, &str>;
     fn valor_ronda(&self) -> Result<Trucos, &str>;
     fn valid_commands(&self, player: &str) -> Vec<String>;
+    fn winner(&self) -> Result<Option<Equipo>, &str>;
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -77,6 +81,7 @@ mod falta_envido;
 mod r#final;
 pub(super) mod inicial;
 mod nada;
+mod player_state;
 mod re_truco;
 mod re_truco_querido;
 mod real_envido;
@@ -84,7 +89,6 @@ mod truco;
 mod truco_querido;
 mod vale_cuatro;
 mod vale_cuatro_querido;
-mod player_state;
 
 #[cfg(test)]
-mod tests;   
+mod tests;

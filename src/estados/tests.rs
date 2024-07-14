@@ -1,5 +1,6 @@
 use crate::{
     carta::{Carta, Numero, Palo},
+    equipos::Equipo,
     Envidos, TrucoStateMachineBuilder,
 };
 
@@ -19,7 +20,7 @@ fn mazo() {
     game_builder.add_player("A".to_string());
     game_builder.add_player("B".to_string());
     let mut game = game_builder.build().unwrap();
-    assert_eq!(Ok(()), game.irse_al_maso());
+    assert!(game.irse_al_maso("A").is_ok());
     assert_eq!(game.tantos(), Ok(Envidos::Value(0)));
     assert_eq!(game.valor_ronda(), Ok(1));
 }
@@ -32,7 +33,7 @@ fn truco() {
     let mut game = game_builder.build().unwrap();
     assert!(game.cantar_truco("A").is_ok());
     assert!(game.cantar_quiero("B").is_ok());
-    assert_eq!(Ok(()), game.irse_al_maso());
+    assert!(game.irse_al_maso("A").is_ok());
     assert_eq!(game.tantos(), Ok(Envidos::Value(0)));
     assert_eq!(game.valor_ronda(), Ok(2));
 }
@@ -63,7 +64,7 @@ fn re_truco_con_quiero() {
         .is_ok());
     assert!(game.cantar_re_truco("A").is_ok());
     assert!(game.cantar_quiero("B").is_ok());
-    assert_eq!(Ok(()), game.irse_al_maso());
+    assert!(game.irse_al_maso("A").is_ok());
     assert_eq!(game.tantos(), Ok(Envidos::Value(0)));
     assert_eq!(game.valor_ronda(), Ok(3));
 }
@@ -78,7 +79,7 @@ fn vale_cuatro() {
     assert!(game.cantar_re_truco("A").is_ok());
     assert!(game.cantar_vale_cuatro("B").is_ok());
     assert!(game.cantar_quiero("A").is_ok());
-    assert_eq!(Ok(()), game.irse_al_maso());
+    assert!(game.irse_al_maso("A").is_ok());
     assert_eq!(game.tantos(), Ok(Envidos::Value(0)));
     assert_eq!(game.valor_ronda(), Ok(4));
 }
@@ -101,7 +102,7 @@ fn vale_cuatro_con_quiero() {
         .is_ok());
     assert!(game.cantar_vale_cuatro("B").is_ok());
     assert!(game.cantar_quiero("A").is_ok());
-    assert_eq!(Ok(()), game.irse_al_maso());
+    assert!(game.irse_al_maso("A").is_ok());
     assert_eq!(game.tantos(), Ok(Envidos::Value(0)));
     assert_eq!(game.valor_ronda(), Ok(4));
 }
@@ -566,4 +567,187 @@ fn card_allowance() {
     assert!(game
         .tirar_carta("B", Carta::new(Numero::Rey, Palo::Oro))
         .is_ok());
+}
+
+#[test]
+fn no_repeats() {
+    let mut game_builder = TrucoStateMachineBuilder::new();
+    game_builder.add_player("A".to_string());
+    game_builder.add_player("B".to_string());
+    let mut game = game_builder.build().unwrap();
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Rey, Palo::Oro))
+        .is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Rey, Palo::Oro))
+        .is_err());
+}
+
+#[test]
+fn no_repeats_between_rounds() {
+    let mut game_builder = TrucoStateMachineBuilder::new();
+    game_builder.add_player("A".to_string());
+    game_builder.add_player("B".to_string());
+    let mut game = game_builder.build().unwrap();
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Ancho, Palo::Oro))
+        .is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Rey, Palo::Oro))
+        .is_ok());
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Rey, Palo::Oro))
+        .is_err());
+}
+
+#[test]
+fn winner_goes_first() {
+    let mut game_builder = TrucoStateMachineBuilder::new();
+    game_builder.add_player("A".to_string());
+    game_builder.add_player("B".to_string());
+    let mut game = game_builder.build().unwrap();
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Ancho, Palo::Espada))
+        .is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Rey, Palo::Espada))
+        .is_ok());
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Rey, Palo::Oro))
+        .is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Ancho, Palo::Oro))
+        .is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Rey, Palo::Basto))
+        .is_ok());
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Ancho, Palo::Basto))
+        .is_ok());
+}
+
+#[test]
+fn pardas() {
+    let mut game_builder = TrucoStateMachineBuilder::new();
+    game_builder.add_player("A".to_string());
+    game_builder.add_player("B".to_string());
+    let mut game = game_builder.build().unwrap();
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Rey, Palo::Oro))
+        .is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Rey, Palo::Basto))
+        .is_ok());
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Rey, Palo::Espada))
+        .is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Ancho, Palo::Espada))
+        .is_ok());
+}
+
+#[test]
+fn aba_winner_a() {
+    let mut game_builder = TrucoStateMachineBuilder::new();
+    game_builder.add_player("A".to_string());
+    game_builder.add_player("B".to_string());
+    let mut game = game_builder.build().unwrap();
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Ancho, Palo::Espada))
+        .is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Rey, Palo::Espada))
+        .is_ok());
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Rey, Palo::Oro))
+        .is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Ancho, Palo::Oro))
+        .is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Rey, Palo::Basto))
+        .is_ok());
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Ancho, Palo::Basto))
+        .is_ok());
+    assert!(game.valor_ronda().is_ok());
+    assert!(matches!(game.winner(), Ok(Some(Equipo::Nosotros))));
+}
+
+#[test]
+fn aa_winner_a() {
+    let mut game_builder = TrucoStateMachineBuilder::new();
+    game_builder.add_player("A".to_string());
+    game_builder.add_player("B".to_string());
+    let mut game = game_builder.build().unwrap();
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Ancho, Palo::Espada))
+        .is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Rey, Palo::Espada))
+        .is_ok());
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Ancho, Palo::Oro))
+        .is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Rey, Palo::Oro))
+        .is_ok());
+    assert!(game.valor_ronda().is_ok());
+    assert!(matches!(game.winner(), Ok(Some(Equipo::Nosotros))));
+}
+
+#[test]
+fn ppb_winner_b() {
+    let mut game_builder = TrucoStateMachineBuilder::new();
+    game_builder.add_player("A".to_string());
+    game_builder.add_player("B".to_string());
+    let mut game = game_builder.build().unwrap();
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Rey, Palo::Oro))
+        .is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Rey, Palo::Espada))
+        .is_ok());
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Ancho, Palo::Oro))
+        .is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Ancho, Palo::Copa))
+        .is_ok());
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Ancho, Palo::Basto))
+        .is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Ancho, Palo::Espada))
+        .is_ok());
+    assert!(game.valor_ronda().is_ok());
+    assert!(matches!(game.winner(), Ok(Some(Equipo::Ellos))));
+}
+
+#[test]
+fn ppp_winner_none() {
+    let mut game_builder = TrucoStateMachineBuilder::new();
+    game_builder.add_player("A".to_string());
+    game_builder.add_player("B".to_string());
+    let mut game = game_builder.build().unwrap();
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Rey, Palo::Oro))
+        .is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Rey, Palo::Copa))
+        .is_ok());
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Ancho, Palo::Oro))
+        .is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Ancho, Palo::Copa))
+        .is_ok());
+    assert!(game
+        .tirar_carta("A", Carta::new(Numero::Rey, Palo::Basto))
+        .is_ok());
+    assert!(game
+        .tirar_carta("B", Carta::new(Numero::Rey, Palo::Espada))
+        .is_ok());
+    assert!(game.valor_ronda().is_ok());
+    assert!(matches!(game.winner(), Ok(None)));
 }

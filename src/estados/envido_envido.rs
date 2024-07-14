@@ -1,4 +1,4 @@
-use crate::carta::Carta;
+use crate::{carta::Carta, equipos::Equipo};
 
 use super::{
     falta_envido::FaltaEnvido, nada::Nada, player_state::PlayersState, r#final::Final,
@@ -20,11 +20,19 @@ const VALOR_QUERIDO: u8 = 4;
 const VALOR_NO_QUERIDO: u8 = 3;
 
 impl TrucoState for EnvidoEnvido {
-    fn irse_al_maso(self: Box<Self>) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
-        Ok(Box::new(Final::new(
-            Envidos::Value(VALOR_NO_QUERIDO),
-            Trucos::Simple,
-        )))
+    fn irse_al_maso(
+        self: Box<Self>,
+        player: &str,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+        let players_team = self.players.team(player);
+        match players_team {
+            Ok(players_team) => Ok(Box::new(Final::new(
+                Envidos::Value(VALOR_NO_QUERIDO),
+                Trucos::Simple,
+                Some(!players_team),
+            ))),
+            Err(_) => Err(self),
+        }
     }
 
     fn cantar_quiero(
@@ -128,5 +136,9 @@ impl TrucoState for EnvidoEnvido {
             ret.push("cantar_falta_envido".to_string());
         }
         ret
+    }
+
+    fn winner(&self) -> Result<Option<Equipo>, &str> {
+        Err("La ronda aun no a terminado.")
     }
 }
