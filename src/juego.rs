@@ -1,9 +1,14 @@
+use std::marker::PhantomData;
+
 use crate::{
     carta::Carta,
     envidos::Envidos,
     equipos::Equipo,
     jugador::Jugador,
-    maquina_de_estados::{TrucoStateMachine, TrucoStateMachineBuilder},
+    maquina_de_estados::{
+        Buildable, Cero, Cinco, Cont, Cuatro, Dos, Seis, Tres, TrucoStateMachine,
+        TrucoStateMachineBuilder, Uno,
+    },
     mazo::Mazo,
 };
 
@@ -100,11 +105,8 @@ impl Truco {
     }
 
     fn rebuild_state(&mut self) {
-        let mut builder = TrucoStateMachineBuilder::new();
-        for jugador in &self.jugadores {
-            builder.add_player(jugador.nombre());
-        }
-        self.estado = builder.build().expect("player amount should be valid");
+        self.estado =
+            TrucoStateMachine::rebuild(self.jugadores.iter().map(Jugador::nombre).collect());
     }
 
     fn new_round(&mut self) -> Result<(Envidos, u8), &'static str> {
@@ -115,7 +117,7 @@ impl Truco {
         Ok((tantos, ronda))
     }
 
-    fn reset_if_needed(&mut self) -> Result<(), &str>{
+    fn reset_if_needed(&mut self) -> Result<(), &str> {
         if let Ok(_winner) = self.winner() {
             self.new_round()?;
         };
@@ -124,37 +126,143 @@ impl Truco {
 }
 
 #[derive(Debug)]
-pub struct TrucoBuilder {
+pub struct TrucoBuilder<H: Hasta, C: Cont> {
     jugadores: Vec<Jugador>,
-    state_builder: TrucoStateMachineBuilder,
+    state_builder: TrucoStateMachineBuilder<C>,
+    hasta: Option<u8>,
+    marker: std::marker::PhantomData<H>,
 }
 
-impl TrucoBuilder {
+impl TrucoBuilder<Sin, Cero> {
     #[must_use]
     pub fn new() -> Self {
         Self {
             jugadores: Vec::new(),
             state_builder: TrucoStateMachineBuilder::new(),
+            hasta: None,
+            marker: PhantomData,
         }
-    }
-
-    pub fn add_player(&mut self, player: String) {
-        self.jugadores.push(Jugador::new(player.clone()));
-        self.state_builder.add_player(player);
-    }
-
-    /// # Errors
-    pub fn build(self) -> Result<Truco, &'static str> {
-        Ok(Truco {
-            jugadores: self.jugadores,
-            estado: self.state_builder.build()?,
-            mazo: Mazo::new(),
-        })
     }
 }
 
-impl Default for TrucoBuilder {
+impl<H: Hasta> TrucoBuilder<H, Cero> {
+    #[must_use]
+    pub fn add_player(mut self, player: String) -> TrucoBuilder<H, Uno> {
+        self.jugadores.push(Jugador::new(player.clone()));
+        TrucoBuilder {
+            jugadores: self.jugadores,
+            state_builder: self.state_builder.add_player(player),
+            hasta: self.hasta,
+            marker: PhantomData,
+        }
+    }
+}
+
+impl<H: Hasta> TrucoBuilder<H, Uno> {
+    #[must_use]
+    pub fn add_player(mut self, player: String) -> TrucoBuilder<H, Dos> {
+        self.jugadores.push(Jugador::new(player.clone()));
+        TrucoBuilder {
+            jugadores: self.jugadores,
+            state_builder: self.state_builder.add_player(player),
+            hasta: self.hasta,
+            marker: PhantomData,
+        }
+    }
+}
+
+impl<H: Hasta> TrucoBuilder<H, Dos> {
+    #[must_use]
+    pub fn add_player(mut self, player: String) -> TrucoBuilder<H, Tres> {
+        self.jugadores.push(Jugador::new(player.clone()));
+        TrucoBuilder {
+            jugadores: self.jugadores,
+            state_builder: self.state_builder.add_player(player),
+            hasta: self.hasta,
+            marker: PhantomData,
+        }
+    }
+}
+
+impl<H: Hasta> TrucoBuilder<H, Tres> {
+    #[must_use]
+    pub fn add_player(mut self, player: String) -> TrucoBuilder<H, Cuatro> {
+        self.jugadores.push(Jugador::new(player.clone()));
+        TrucoBuilder {
+            jugadores: self.jugadores,
+            state_builder: self.state_builder.add_player(player),
+            hasta: self.hasta,
+            marker: PhantomData,
+        }
+    }
+}
+
+impl<H: Hasta> TrucoBuilder<H, Cuatro> {
+    #[must_use]
+    pub fn add_player(mut self, player: String) -> TrucoBuilder<H, Cinco> {
+        self.jugadores.push(Jugador::new(player.clone()));
+        TrucoBuilder {
+            jugadores: self.jugadores,
+            state_builder: self.state_builder.add_player(player),
+            hasta: self.hasta,
+            marker: PhantomData,
+        }
+    }
+}
+
+impl<H: Hasta> TrucoBuilder<H, Cinco> {
+    #[must_use]
+    pub fn add_player(mut self, player: String) -> TrucoBuilder<H, Seis> {
+        self.jugadores.push(Jugador::new(player.clone()));
+        TrucoBuilder {
+            jugadores: self.jugadores,
+            state_builder: self.state_builder.add_player(player),
+            hasta: self.hasta,
+            marker: PhantomData,
+        }
+    }
+}
+
+impl<C: Cont> TrucoBuilder<Sin, C> {
+    #[must_use]
+    pub fn hasta(mut self, hasta: u8) -> TrucoBuilder<Con, C> {
+        self.hasta = Some(hasta);
+        TrucoBuilder::from(self)
+    }
+}
+
+impl<H: Hasta + Buildable, C: Cont + Buildable> TrucoBuilder<H, C> {
+    #[must_use]
+    pub fn build(self) -> Truco {
+        Truco {
+            jugadores: self.jugadores,
+            estado: self.state_builder.build(),
+            mazo: Mazo::new(),
+        }
+    }
+}
+
+impl Default for TrucoBuilder<Sin, Cero> {
     fn default() -> Self {
         Self::new()
     }
 }
+
+impl<Ho: Hasta, C: Cont> TrucoBuilder<Ho, C> {
+    fn from<Hi: Hasta>(value: TrucoBuilder<Hi, C>) -> TrucoBuilder<Ho, C> {
+        TrucoBuilder::<Ho, C> {
+            jugadores: value.jugadores,
+            state_builder: value.state_builder,
+            hasta: value.hasta,
+            marker: PhantomData,
+        }
+    }
+}
+
+pub trait Hasta {}
+pub struct Sin;
+impl Hasta for Sin {}
+pub struct Con;
+impl Hasta for Con {}
+
+impl Buildable for Con {}

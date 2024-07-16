@@ -1,10 +1,9 @@
 use std::cell::Cell;
+use std::marker::PhantomData;
 
-use crate::{carta::Carta, envidos::Envidos};
 use crate::equipos::Equipo;
+use crate::{carta::Carta, envidos::Envidos};
 use estados::{inicial::Inicial, TrucoState};
-
-const MAX_PLAYERS: usize = 6;
 
 pub(super) struct TrucoStateMachine {
     internal_state: Cell<Option<Box<dyn TrucoState>>>,
@@ -257,42 +256,115 @@ impl TrucoStateMachine {
             .expect(Self::NON_EXISTING_STATE)
             .winner()
     }
+
+    pub fn rebuild(players: Vec<String>) -> Self {
+        Self {
+            internal_state: Cell::new(Some(Box::new(Inicial::new(players)))),
+        }
+    }
 }
 
 #[derive(Debug)]
-pub(super) struct TrucoStateMachineBuilder {
+pub(super) struct TrucoStateMachineBuilder<C: Cont> {
     players: Vec<String>,
+    marker: std::marker::PhantomData<C>,
 }
 
-impl TrucoStateMachineBuilder {
+impl TrucoStateMachineBuilder<Cero> {
     #[must_use]
     pub fn new() -> Self {
         Self {
             players: Vec::new(),
-        }
-    }
-
-    pub fn add_player(&mut self, player: String) {
-        self.players.push(player);
-    }
-
-    /// # Errors
-    pub fn build(self) -> Result<TrucoStateMachine, &'static str> {
-        let player_count = self.players.len();
-        if player_count <= MAX_PLAYERS && player_count % 2 == 0 {
-            Ok(TrucoStateMachine {
-                internal_state: Cell::new(Some(Box::new(Inicial::new(self.players)))),
-            })
-        } else {
-            Err("Invalid player_count")
+            marker: PhantomData,
         }
     }
 }
 
-impl Default for TrucoStateMachineBuilder {
+impl TrucoStateMachineBuilder<Cero> {
+    pub fn add_player(mut self, player: String) -> TrucoStateMachineBuilder<Uno> {
+        self.players.push(player);
+        TrucoStateMachineBuilder::from(self)
+    }
+}
+
+impl TrucoStateMachineBuilder<Uno> {
+    pub fn add_player(mut self, player: String) -> TrucoStateMachineBuilder<Dos> {
+        self.players.push(player);
+        TrucoStateMachineBuilder::from(self)
+    }
+}
+
+impl TrucoStateMachineBuilder<Dos> {
+    pub fn add_player(mut self, player: String) -> TrucoStateMachineBuilder<Tres> {
+        self.players.push(player);
+        TrucoStateMachineBuilder::from(self)
+    }
+}
+
+impl TrucoStateMachineBuilder<Tres> {
+    pub fn add_player(mut self, player: String) -> TrucoStateMachineBuilder<Cuatro> {
+        self.players.push(player);
+        TrucoStateMachineBuilder::from(self)
+    }
+}
+
+impl TrucoStateMachineBuilder<Cuatro> {
+    pub fn add_player(mut self, player: String) -> TrucoStateMachineBuilder<Cinco> {
+        self.players.push(player);
+        TrucoStateMachineBuilder::from(self)
+    }
+}
+
+impl TrucoStateMachineBuilder<Cinco> {
+    pub fn add_player(mut self, player: String) -> TrucoStateMachineBuilder<Seis> {
+        self.players.push(player);
+        TrucoStateMachineBuilder::from(self)
+    }
+}
+
+impl<C: Cont + Buildable> TrucoStateMachineBuilder<C> {
+    /// # Errors
+    pub fn build(self) -> TrucoStateMachine {
+        TrucoStateMachine {
+            internal_state: Cell::new(Some(Box::new(Inicial::new(self.players)))),
+        }
+    }
+}
+
+impl<Co: Cont> TrucoStateMachineBuilder<Co> {
+    fn from<Ci: Cont>(value: TrucoStateMachineBuilder<Ci>) -> TrucoStateMachineBuilder<Co> {
+        TrucoStateMachineBuilder::<Co> {
+            players: value.players,
+            marker: PhantomData,
+        }
+    }
+}
+
+impl Default for TrucoStateMachineBuilder<Cero> {
     fn default() -> Self {
         Self::new()
     }
 }
+
+pub trait Cont {}
+pub struct Cero;
+impl Cont for Cero {}
+pub struct Uno;
+impl Cont for Uno {}
+pub struct Dos;
+impl Cont for Dos {}
+pub struct Tres;
+impl Cont for Tres {}
+pub struct Cuatro;
+impl Cont for Cuatro {}
+pub struct Cinco;
+impl Cont for Cinco {}
+pub struct Seis;
+impl Cont for Seis {}
+
+pub trait Buildable {}
+impl Buildable for Dos {}
+impl Buildable for Cuatro {}
+impl Buildable for Seis {}
 
 mod estados;
