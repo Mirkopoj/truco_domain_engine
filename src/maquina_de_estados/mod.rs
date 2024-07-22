@@ -257,9 +257,9 @@ impl TrucoStateMachine {
             .winner()
     }
 
-    pub fn rebuild(players: Vec<String>) -> Self {
+    pub fn rebuild(players: Vec<String>, mano: usize) -> Self {
         Self {
-            internal_state: Cell::new(Some(Box::new(Inicial::new(players)))),
+            internal_state: Cell::new(Some(Box::new(Inicial::new(players, mano)))),
         }
     }
 }
@@ -326,7 +326,7 @@ impl<C: Cont + Buildable> TrucoStateMachineBuilder<C> {
     /// # Errors
     pub fn build(self) -> TrucoStateMachine {
         TrucoStateMachine {
-            internal_state: Cell::new(Some(Box::new(Inicial::new(self.players)))),
+            internal_state: Cell::new(Some(Box::new(Inicial::new(self.players, 0)))),
         }
     }
 }

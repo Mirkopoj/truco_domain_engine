@@ -2,6 +2,7 @@ use std::marker::PhantomData;
 
 use crate::{
     carta::Carta,
+    contador::Contador,
     envidos::Envidos,
     equipos::Equipo,
     jugador::Jugador,
@@ -16,6 +17,8 @@ pub struct Truco {
     jugadores: Vec<Jugador>,
     estado: TrucoStateMachine,
     mazo: Mazo,
+    contador: Contador,
+    mano: usize,
 }
 
 impl Truco {
@@ -105,21 +108,38 @@ impl Truco {
     }
 
     fn rebuild_state(&mut self) {
-        self.estado =
-            TrucoStateMachine::rebuild(self.jugadores.iter().map(Jugador::nombre).collect());
+        self.mano = (self.mano + 1) % self.jugadores.len();
+        self.estado = TrucoStateMachine::rebuild(
+            self.jugadores.iter().map(Jugador::nombre).collect(),
+            self.mano,
+        );
     }
 
-    fn new_round(&mut self) -> Result<(Envidos, u8), &'static str> {
-        let tantos = self.tantos()?;
-        let ronda = self.valor_ronda()?;
+    fn new_round(&mut self) {
         self.rebuild_state();
         self.repartir();
-        Ok((tantos, ronda))
     }
 
     fn reset_if_needed(&mut self) -> Result<(), &str> {
-        if let Ok(_winner) = self.winner() {
-            self.new_round()?;
+        if let Ok(winner) = self.winner() {
+            let tantos_para = Equipo::from(
+                self.jugadores
+                    .iter()
+                    .enumerate()
+                    .rev()
+                    .max_by(|(_, x), (_, y)| x.tantos().cmp(&y.tantos()))
+                    .expect("Players Shoudn't be empty")
+                    .0,
+            );
+            let tantos = self.tantos()?;
+            if self.contador.sumar_tantos(tantos_para, tantos) {
+                return Ok(());
+            }
+            let ronda = self.valor_ronda()?;
+            if self.contador.sumar(winner, ronda) {
+                return Ok(());
+            };
+            self.new_round();
         };
         Ok(())
     }
@@ -238,6 +258,8 @@ impl<H: Hasta + Buildable, C: Cont + Buildable> TrucoBuilder<H, C> {
             jugadores: self.jugadores,
             estado: self.state_builder.build(),
             mazo: Mazo::new(),
+            contador: Contador::new(self.hasta.unwrap_or(30)),
+            mano: 0,
         }
     }
 }

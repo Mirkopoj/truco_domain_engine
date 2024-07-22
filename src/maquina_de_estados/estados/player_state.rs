@@ -21,10 +21,10 @@ type SubGameEnded = Option<SubGameEndedWinner>;
 type SubGameEndedWinner = Option<Equipo>;
 
 impl PlayersState {
-    pub(super) fn new(players: Vec<String>) -> Self {
+    pub(super) fn new(players: Vec<String>, mano: usize) -> Self {
         Self {
-            cont: 0,
-            initial: 0,
+            cont: mano,
+            initial: mano,
             players: players
                 .into_iter()
                 .map(|n| PlayerThrownCard {
@@ -120,11 +120,7 @@ impl PlayersState {
         let ret = if self.next_player() {
             let (best_cards_position, best_card) = self.best_card();
             let winner = if self.round_has_winner(best_card) {
-                Some(if best_cards_position % 2 == 0 {
-                    Equipo::Nosotros
-                } else {
-                    Equipo::Ellos
-                })
+                Some(Equipo::from(best_cards_position))
             } else {
                 None
             };
@@ -148,11 +144,7 @@ impl PlayersState {
 
     pub(super) fn team(&self, player: &str) -> Result<Equipo, &str> {
         if let Some(index) = self.players.iter().position(|p| p.name == player) {
-            Ok(if index % 2 == 0 {
-                Equipo::Nosotros
-            } else {
-                Equipo::Ellos
-            })
+            Ok(Equipo::from(index))
         } else {
             Err("Non Existing player")
         }

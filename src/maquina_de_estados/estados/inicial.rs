@@ -12,9 +12,9 @@ pub struct Inicial {
 }
 
 impl Inicial {
-    pub fn new(players: Vec<String>) -> Self {
+    pub fn new(players: Vec<String>, mano: usize) -> Self {
         Self {
-            players: PlayersState::new(players),
+            players: PlayersState::new(players, mano),
         }
     }
 }

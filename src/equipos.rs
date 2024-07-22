@@ -1,9 +1,19 @@
 use std::ops::Not;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Equipo {
     Nosotros,
     Ellos,
+}
+
+impl Equipo {
+    pub fn from(index: usize) -> Equipo {
+        if index % 2 == 0 {
+            Equipo::Nosotros
+        } else {
+            Equipo::Ellos
+        }
+    }
 }
 
 impl Not for Equipo {
