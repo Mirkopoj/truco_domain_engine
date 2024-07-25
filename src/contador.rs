@@ -49,15 +49,15 @@ impl Contador {
         self.hay_ganador()
     }
 
-    /*pub fn ganador(&self) -> &str {
+    pub fn ganador(&self) -> Option<Equipo> {
         if self.hasta <= self.puntos[0] {
-            return "Nosotros";
+            return Some(Equipo::Nosotros);
         }
         if self.hasta <= self.puntos[1] {
-            return "Ellos";
+            return Some(Equipo::Ellos);
         }
-        "Nadie"
-    }*/
+        None
+    }
 }
 
 fn cuadradito(puntos: u8) -> (char, char, char, char, char) {

@@ -1,5 +1,6 @@
 use crate::{
     carta::{Carta, Numero, Palo},
+    equipos::Equipo,
     juego::TrucoBuilder,
 };
 
@@ -35,7 +36,10 @@ fn partida() {
     assert!(game
         .tirar_carta("B", Carta::new(Numero::Dos, Palo::Oro))
         .is_ok());
+    assert!(game.ganador().is_none());
     assert!(game.irse_al_maso("A").is_ok());
     assert!(game.irse_al_maso("B").is_err());
     assert!(game.irse_al_maso("A").is_err());
+    assert!(game.terminado());
+    assert_eq!(game.ganador(), Some(Equipo::Ellos));
 }

@@ -19,6 +19,7 @@ pub struct Truco {
     mazo: Mazo,
     contador: Contador,
     mano: usize,
+    terminado: bool,
 }
 
 impl Truco {
@@ -133,16 +134,27 @@ impl Truco {
             );
             let tantos = self.tantos()?;
             if self.contador.sumar_tantos(tantos_para, tantos) {
+                self.terminado = true;
                 return Ok(());
             }
             let ronda = self.valor_ronda()?;
             if self.contador.sumar(winner, ronda) {
+                self.terminado = true;
                 return Ok(());
             };
             self.new_round();
         };
         Ok(())
     }
+
+    pub fn terminado(&self) -> bool {
+        self.terminado
+    }
+
+    pub fn ganador(&self) -> Option<Equipo> {
+        self.contador.ganador()
+    }
+
 }
 
 #[derive(Debug)]
@@ -260,6 +272,7 @@ impl<H: Hasta + Buildable, C: Cont + Buildable> TrucoBuilder<H, C> {
             mazo: Mazo::new(),
             contador: Contador::new(self.hasta.unwrap_or(30)),
             mano: 0,
+            terminado: false,
         }
     }
 }
