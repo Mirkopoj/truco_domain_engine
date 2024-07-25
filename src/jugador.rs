@@ -35,4 +35,13 @@ impl Jugador {
     pub fn tantos(&self) -> u8 {
         self.tantos
     }
+
+    pub fn carta(&mut self, carta: usize) -> Result<Carta, &'static str> {
+        let msg = "Esa carta no existe";
+        if carta < 3 {
+            self.mano[carta].take().ok_or(msg)
+        } else {
+            Err(msg)
+        }
+    }
 }

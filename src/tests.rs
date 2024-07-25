@@ -1,8 +1,4 @@
-use crate::{
-    carta::{Carta, Numero, Palo},
-    equipos::Equipo,
-    juego::TrucoBuilder,
-};
+use crate::{equipos::Equipo, juego::TrucoBuilder};
 
 #[test]
 fn partida() {
@@ -20,9 +16,7 @@ fn partida() {
     assert!(game.cantar_re_truco("A").is_ok());
     assert!(game.cantar_vale_cuatro("B").is_ok());
     assert!(game.cantar_quiero("A").is_ok());
-    assert!(game
-        .tirar_carta("B", Carta::new(Numero::Dos, Palo::Oro))
-        .is_ok());
+    assert!(game.tirar_carta("B", 0).is_ok());
     assert!(game.irse_al_maso("A").is_ok());
     assert!(game.cantar_truco("A").is_ok());
     assert!(game.cantar_re_truco("B").is_ok());
@@ -33,9 +27,7 @@ fn partida() {
     assert!(game.cantar_re_truco("A").is_ok());
     assert!(game.cantar_vale_cuatro("B").is_ok());
     assert!(game.cantar_quiero("A").is_ok());
-    assert!(game
-        .tirar_carta("B", Carta::new(Numero::Dos, Palo::Oro))
-        .is_ok());
+    assert!(game.tirar_carta("B", 0).is_ok());
     assert!(game.ganador().is_none());
     assert!(game.irse_al_maso("A").is_ok());
     assert!(game.irse_al_maso("B").is_err());

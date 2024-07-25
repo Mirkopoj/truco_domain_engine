@@ -82,10 +82,6 @@ impl Carta {
     pub fn valor_juego(self) -> u8 {
         self.valor_juego
     }
-
-    pub fn palo(self) -> Palo {
-        self.palo
-    }
 }
 
 impl Display for Carta {

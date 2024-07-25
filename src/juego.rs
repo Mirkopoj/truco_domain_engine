@@ -1,7 +1,6 @@
 use std::marker::PhantomData;
 
 use crate::{
-    carta::Carta,
     contador::Contador,
     envidos::Envidos,
     equipos::Equipo,
@@ -81,7 +80,13 @@ impl Truco {
 
     /// # Errors
     /// # Panics
-    pub fn tirar_carta(&mut self, player: &str, card: Carta) -> Result<(), &str> {
+    pub fn tirar_carta(&mut self, player: &str, card: usize) -> Result<(), &str> {
+        let card = self
+            .jugadores
+            .iter_mut()
+            .find(|j| j.nombre() == player)
+            .ok_or("Jugador inexistente")?
+            .carta(card)?;
         self.estado.tirar_carta(player, card)?;
         self.reset_if_needed()
     }
@@ -154,7 +159,6 @@ impl Truco {
     pub fn ganador(&self) -> Option<Equipo> {
         self.contador.ganador()
     }
-
 }
 
 #[derive(Debug)]
