@@ -347,18 +347,25 @@ impl Default for TrucoStateMachineBuilder<Cero> {
 }
 
 pub trait Cont {}
+#[derive(Clone)]
 pub struct Cero;
 impl Cont for Cero {}
+#[derive(Clone)]
 pub struct Uno;
 impl Cont for Uno {}
+#[derive(Clone)]
 pub struct Dos;
 impl Cont for Dos {}
+#[derive(Clone)]
 pub struct Tres;
 impl Cont for Tres {}
+#[derive(Clone)]
 pub struct Cuatro;
 impl Cont for Cuatro {}
+#[derive(Clone)]
 pub struct Cinco;
 impl Cont for Cinco {}
+#[derive(Clone)]
 pub struct Seis;
 impl Cont for Seis {}
 

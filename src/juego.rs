@@ -299,8 +299,10 @@ impl<Ho: Hasta, C: Cont> TrucoBuilder<Ho, C> {
 }
 
 pub trait Hasta {}
+#[derive(Clone)]
 pub struct Sin;
 impl Hasta for Sin {}
+#[derive(Clone)]
 pub struct Con;
 impl Hasta for Con {}
 
