@@ -100,7 +100,7 @@ impl Truco {
     }
 
     /// # Panics
-    pub fn valid_commands(&mut self, player: &'static str) -> Vec<String> {
+    pub fn valid_commands(&mut self, player: &str) -> Vec<String> {
         self.estado.valid_commands(player)
     }
 

@@ -239,7 +239,7 @@ impl TrucoStateMachine {
     }
 
     /// # Panics
-    pub fn valid_commands(&mut self, player: &'static str) -> Vec<String> {
+    pub fn valid_commands(&mut self, player: &str) -> Vec<String> {
         self.internal_state
             .get_mut()
             .as_ref()
