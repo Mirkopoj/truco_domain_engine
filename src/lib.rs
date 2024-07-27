@@ -1,6 +1,6 @@
 mod carta;
 pub mod equipos;
-mod maquina_de_estados;
+pub mod maquina_de_estados;
 mod mazo;
 mod jugador;
 pub mod juego;
