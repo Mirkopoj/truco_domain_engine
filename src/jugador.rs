@@ -2,7 +2,7 @@ use itertools::Itertools;
 
 use crate::carta::Carta;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Jugador {
     nombre: String,
     mano: [Option<Carta>; 3],

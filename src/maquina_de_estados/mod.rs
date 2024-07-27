@@ -264,7 +264,7 @@ impl TrucoStateMachine {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(super) struct TrucoStateMachineBuilder<C: Cont> {
     players: Vec<String>,
     marker: std::marker::PhantomData<C>,

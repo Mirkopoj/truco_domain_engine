@@ -161,7 +161,7 @@ impl Truco {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct TrucoBuilder<H: Hasta, C: Cont> {
     jugadores: Vec<Jugador>,
     state_builder: TrucoStateMachineBuilder<C>,
