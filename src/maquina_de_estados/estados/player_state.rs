@@ -114,6 +114,14 @@ impl PlayersState {
 
     pub(super) fn tirar_carta(&mut self, player: &str, card: Carta) -> Result<RoundEnding, ()> {
         if !self.is_turn(player) || self.was_played_peviosly(card) {
+            println!(
+                "{player}({}) called in turn of {}({}), carta {card} ({}), was played prev {}",
+                player.len(),
+                self.players[self.cont].name,
+                self.players[self.cont].name.len(),
+                player == self.players[self.cont].name,
+                self.was_played_peviosly(card)
+            );
             return Err(());
         }
         self.players[self.cont].card = Some(card);
@@ -139,6 +147,7 @@ impl PlayersState {
         } else {
             None
         };
+        println!("Now is turn of {}", self.players[self.cont].name);
         Ok(ret)
     }
 

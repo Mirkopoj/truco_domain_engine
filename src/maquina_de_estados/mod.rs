@@ -281,43 +281,43 @@ impl TrucoStateMachineBuilder<Cero> {
 }
 
 impl TrucoStateMachineBuilder<Cero> {
-    pub fn add_player(mut self, player: String) -> TrucoStateMachineBuilder<Uno> {
-        self.players.push(player);
+    pub fn add_player(mut self, player: &str) -> TrucoStateMachineBuilder<Uno> {
+        self.players.push(player.trim().to_string());
         TrucoStateMachineBuilder::from(self)
     }
 }
 
 impl TrucoStateMachineBuilder<Uno> {
-    pub fn add_player(mut self, player: String) -> TrucoStateMachineBuilder<Dos> {
-        self.players.push(player);
+    pub fn add_player(mut self, player: &str) -> TrucoStateMachineBuilder<Dos> {
+        self.players.push(player.trim().to_string());
         TrucoStateMachineBuilder::from(self)
     }
 }
 
 impl TrucoStateMachineBuilder<Dos> {
-    pub fn add_player(mut self, player: String) -> TrucoStateMachineBuilder<Tres> {
-        self.players.push(player);
+    pub fn add_player(mut self, player: &str) -> TrucoStateMachineBuilder<Tres> {
+        self.players.push(player.trim().to_string());
         TrucoStateMachineBuilder::from(self)
     }
 }
 
 impl TrucoStateMachineBuilder<Tres> {
-    pub fn add_player(mut self, player: String) -> TrucoStateMachineBuilder<Cuatro> {
-        self.players.push(player);
+    pub fn add_player(mut self, player: &str) -> TrucoStateMachineBuilder<Cuatro> {
+        self.players.push(player.trim().to_string());
         TrucoStateMachineBuilder::from(self)
     }
 }
 
 impl TrucoStateMachineBuilder<Cuatro> {
-    pub fn add_player(mut self, player: String) -> TrucoStateMachineBuilder<Cinco> {
-        self.players.push(player);
+    pub fn add_player(mut self, player: &str) -> TrucoStateMachineBuilder<Cinco> {
+        self.players.push(player.trim().to_string());
         TrucoStateMachineBuilder::from(self)
     }
 }
 
 impl TrucoStateMachineBuilder<Cinco> {
-    pub fn add_player(mut self, player: String) -> TrucoStateMachineBuilder<Seis> {
-        self.players.push(player);
+    pub fn add_player(mut self, player: &str) -> TrucoStateMachineBuilder<Seis> {
+        self.players.push(player.trim().to_string());
         TrucoStateMachineBuilder::from(self)
     }
 }

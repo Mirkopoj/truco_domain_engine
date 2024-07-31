@@ -3,8 +3,8 @@ use crate::{equipos::Equipo, juego::TrucoBuilder};
 #[test]
 fn partida() {
     let mut game = TrucoBuilder::new()
-        .add_player("A".to_string())
-        .add_player("B".to_string())
+        .add_player("A")
+        .add_player("B")
         .hasta(15)
         .build();
     assert!(game.cantar_truco("A").is_ok());
@@ -34,4 +34,18 @@ fn partida() {
     assert!(game.irse_al_maso("A").is_err());
     assert!(game.terminado());
     assert_eq!(game.ganador(), Some(Equipo::Ellos));
+}
+
+#[test]
+fn tirar() {
+    let mut game = TrucoBuilder::new()
+        .add_player("A")
+        .add_player("B")
+        .hasta(15)
+        .build();
+    assert!(game.tirar_carta("B", 0).is_err());
+    assert!(game.tirar_carta("A", 0).is_ok());
+    assert!(game.tirar_carta("B", 0).is_ok());
+    assert!(game.tirar_carta("A", 0).is_err());
+    assert!(game.tirar_carta("B", 0).is_err());
 }

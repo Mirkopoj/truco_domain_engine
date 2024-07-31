@@ -1,4 +1,5 @@
 use itertools::Itertools;
+use std::fmt::Display;
 
 use crate::carta::Carta;
 
@@ -10,9 +11,9 @@ pub struct Jugador {
 }
 
 impl Jugador {
-    pub fn new(nombre: String) -> Self {
+    pub fn new(nombre: &str) -> Self {
         Self {
-            nombre,
+            nombre: nombre.trim().to_string(),
             mano: [None; 3],
             tantos: 0,
         }
@@ -38,10 +39,26 @@ impl Jugador {
 
     pub fn carta(&mut self, carta: usize) -> Result<Carta, &'static str> {
         let msg = "Esa carta no existe";
-        if carta < 3 {
-            self.mano[carta].take().ok_or(msg)
+        if carta < 3 && self.mano[carta].is_some() {
+            Ok(self.mano[carta].unwrap())
         } else {
             Err(msg)
         }
+    }
+
+    pub fn use_carta(&mut self, carta: usize) {
+        self.mano[carta].take();
+    }
+}
+
+impl Display for Jugador {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for carta in self.mano {
+            match carta {
+                Some(c) => write!(f, " {c}"),
+                None => write!(f, "    "),
+            }?;
+        }
+        write!(f, "")
     }
 }
