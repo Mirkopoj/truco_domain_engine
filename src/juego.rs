@@ -159,6 +159,10 @@ impl Truco {
     pub fn ganador(&self) -> Option<Equipo> {
         self.contador.ganador()
     }
+
+    pub fn print_state(&self) -> String {
+        String::new()
+    }
 }
 
 #[derive(Debug, Clone)]
