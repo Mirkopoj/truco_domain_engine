@@ -1,6 +1,6 @@
 use crate::{carta::Carta, envidos::Envidos, equipos::Equipo};
 
-pub(super) trait TrucoState {
+pub(super) trait TrucoState: Send {
     fn irse_al_maso(
         self: Box<Self>,
         player: &str,
