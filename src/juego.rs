@@ -194,8 +194,8 @@ impl Truco {
         ret
     }
 
-    pub fn print_state(&self) -> String {
-        format!("{:#}", self.contador) + "\n" + &self.cartas()
+    pub fn print_state(&mut self) -> String {
+        format!("{:#}", self.contador) + "\n" + &self.cartas() + "\n" + &self.estado.turn()
     }
 
     /// # Errors

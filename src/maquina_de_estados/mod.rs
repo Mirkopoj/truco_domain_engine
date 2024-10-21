@@ -262,6 +262,15 @@ impl TrucoStateMachine {
             internal_state: Cell::new(Some(Box::new(Inicial::new(players, mano)))),
         }
     }
+
+    /// # Panics
+    pub fn turn(&mut self) -> Box<str> {
+        self.internal_state
+            .get_mut()
+            .as_ref()
+            .expect(Self::NON_EXISTING_STATE)
+            .turn()
+    }
 }
 
 #[derive(Debug, Clone)]

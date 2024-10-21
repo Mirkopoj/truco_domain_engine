@@ -158,4 +158,22 @@ impl PlayersState {
             Err("Non Existing player")
         }
     }
+
+    pub(super) fn turn(&self) -> Box<str> {
+        self.players[self.cont].name.clone().into()
+    }
+
+    pub(super) fn accepting(&self) -> Box<str> {
+        self.players
+            .iter()
+            .filter_map(|p| {
+                if self.is_accepting(&p.name) {
+                    Some(&p.name)
+                } else {
+                    None
+                }
+            })
+            .fold(String::new(), |a, b| a + b + ", ")
+            .into()
+    }
 }

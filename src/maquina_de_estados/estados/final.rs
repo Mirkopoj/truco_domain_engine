@@ -94,4 +94,8 @@ impl TrucoState for Final {
     fn winner(&self) -> Result<Option<Equipo>, &'static str> {
         Ok(self.winner)
     }
+
+    fn turn(&self) -> Box<str> {
+        "Nadie".into()
+    }
 }

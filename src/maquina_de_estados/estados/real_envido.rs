@@ -108,7 +108,11 @@ impl TrucoState for RealEnvido {
         Err(self)
     }
 
-    fn tirar_carta(self: Box<Self>, _: &str, _: Carta) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
+    fn tirar_carta(
+        self: Box<Self>,
+        _: &str,
+        _: Carta,
+    ) -> Result<Box<dyn TrucoState>, Box<dyn TrucoState>> {
         Err(self)
     }
 
@@ -132,5 +136,9 @@ impl TrucoState for RealEnvido {
 
     fn winner(&self) -> Result<Option<Equipo>, &'static str> {
         Err("La ronda aun no a terminado.")
+    }
+
+    fn turn(&self) -> Box<str> {
+        self.players.accepting()
     }
 }

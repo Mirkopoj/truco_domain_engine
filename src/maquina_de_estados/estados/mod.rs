@@ -46,6 +46,7 @@ pub(super) trait TrucoState: Send {
     fn valor_ronda(&self) -> Result<Trucos, &'static str>;
     fn valid_commands(&self, player: &str) -> Vec<String>;
     fn winner(&self) -> Result<Option<Equipo>, &'static str>;
+    fn turn(&self) -> Box<str>;
 }
 
 #[derive(Debug, Clone, Copy)]

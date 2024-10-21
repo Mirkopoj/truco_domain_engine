@@ -141,4 +141,8 @@ impl TrucoState for EnvidoEnvido {
     fn winner(&self) -> Result<Option<Equipo>, &'static str> {
         Err("La ronda aun no a terminado.")
     }
+
+    fn turn(&self) -> Box<str> {
+        self.players.accepting()
+    }
 }
